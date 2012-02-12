@@ -27,6 +27,8 @@ Patch1:           0002-Fix-initd-script.patch
 Patch2:           0003-Build-additional-modules.patch
 # Modifications here are purely temporary until we solve issues in the Right Way (tm)
 Patch3:           0004-Ugly-patch-nuff-said.patch
+Patch4:           0005-Adding-javax.transaction-to-the-minimal-build.patch
+Patch5:           0006-adding-javax.validation-to-build.xml.patch
 
 BuildArch:        noarch
 
@@ -130,6 +132,8 @@ This package contains the API documentation for %{name}.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 %build
 # We don't have packaged all test dependencies (jboss-test for example)
@@ -255,6 +259,7 @@ pushd $RPM_BUILD_ROOT%{homedir}
     ln -s $(build-classpath jboss/xnio-nio) org/jboss/xnio/nio/main/xnio-nio.jar
     ln -s $(build-classpath jboss/jboss-stdio) org/jboss/stdio/main/jboss-stdio.jar
     ln -s $(build-classpath jboss/staxmapper) org/jboss/staxmapper/main/staxmapper.jar
+    ln -s $(build-classpath geronimo-validation) javax/validation/api/main/geronimo-validation.jar
     ln -s $(build-classpath log4j) org/apache/log4j/main/log4j.jar
 
     # JBoss AS modules (without build-config and threads)
