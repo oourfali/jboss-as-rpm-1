@@ -1,0 +1,38 @@
+From 20ae21abaf03b080d2f360e1598f95d7fb5f7fb8 Mon Sep 17 00:00:00 2001
+From: Oved Ourfali <ovedo@redhat.com>
+Date: Sun, 12 Feb 2012 12:09:59 +0200
+Subject: [PATCH] adding javax.validation to build.xml
+
+---
+ build/build.xml |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/build/build.xml b/build/build.xml
+index 192119e..6714818 100644
+--- a/build/build.xml
++++ b/build/build.xml
+@@ -113,6 +113,10 @@
+             <maven-resource group="org.jboss.spec.javax.transaction" artifact="jboss-transaction-api_1.1_spec"/>
+         </module-def>
+ 
++        <module-def name="javax.validation.api">
++            <maven-resource group="javax.validation" artifact="validation-api"/>
++        </module-def>
++
+         <module-def name="javax.xml.stream.api"/>
+ 
+         <module-def name="org.apache.log4j">
+@@ -398,10 +402,6 @@
+             <maven-resource group="org.jboss.spec.javax.servlet.jstl" artifact="jboss-jstl-api_1.2_spec"/>
+         </module-def>
+ 
+-        <module-def name="javax.validation.api">
+-            <maven-resource group="javax.validation" artifact="validation-api"/>
+-        </module-def>
+-
+         <module-def name="javax.ws.rs.api">
+             <maven-resource group="org.jboss.spec.javax.ws.rs" artifact="jboss-jaxrs-api_1.1_spec"/>
+         </module-def>
+-- 
+1.7.8.1
+
