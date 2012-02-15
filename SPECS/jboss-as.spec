@@ -29,6 +29,8 @@ Patch2:           0003-Build-additional-modules.patch
 Patch3:           0004-Ugly-patch-nuff-said.patch
 Patch4:           0005-Adding-javax.transaction-to-the-minimal-build.patch
 Patch5:           0006-adding-javax.validation-to-build.xml.patch
+Patch6:           0007-making-the-dependency-in-javax.xml.ws.api-optional-i.patch
+Patch7:           0008-adding-org.hibernate.validator.patch
 
 BuildArch:        noarch
 
@@ -134,6 +136,8 @@ This package contains the API documentation for %{name}.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
+%patch7 -p1
 
 %build
 # We don't have packaged all test dependencies (jboss-test for example)
@@ -260,6 +264,7 @@ pushd $RPM_BUILD_ROOT%{homedir}
     ln -s $(build-classpath jboss/jboss-stdio) org/jboss/stdio/main/jboss-stdio.jar
     ln -s $(build-classpath jboss/staxmapper) org/jboss/staxmapper/main/staxmapper.jar
     ln -s $(build-classpath geronimo-validation) javax/validation/api/main/geronimo-validation.jar
+    ln -s $(build-classpath hibernate-validator.jar) org/hibernate/validator/main/hibernate-validator.jar
     ln -s $(build-classpath log4j) org/apache/log4j/main/log4j.jar
 
     # JBoss AS modules (without build-config and threads)
