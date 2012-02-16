@@ -9,7 +9,7 @@
 
 %global tcuid 92
 
-%global modules controller-client controller deployment-repository domain-management ee embedded jmx naming network platform-mbean process-controller protocol remoting server
+%global modules controller-client controller deployment-repository domain-management ee embedded jmx logging naming network platform-mbean process-controller protocol remoting server
 
 Name:             jboss-as
 Version:          7.1.0
@@ -33,6 +33,7 @@ Patch6:           0007-making-the-dependency-in-javax.xml.ws.api-optional-i.patc
 Patch7:           0008-adding-org.hibernate.validator.patch
 Patch8:           0009-adding-org.jboss.metadata-to-minimal-build.patch
 Patch9:           0010-adding-org.jboss.ejb3-module-to-minimal-build.patch
+Patch10:          0011-adding-org.jboss.as.logging.patch
 
 BuildArch:        noarch
 
@@ -142,6 +143,7 @@ This package contains the API documentation for %{name}.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 %build
 # We don't have packaged all test dependencies (jboss-test for example)
