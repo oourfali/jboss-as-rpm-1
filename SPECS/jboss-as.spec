@@ -31,6 +31,7 @@ Patch4:           0005-Adding-javax.transaction-to-the-minimal-build.patch
 Patch5:           0006-adding-javax.validation-to-build.xml.patch
 Patch6:           0007-making-the-dependency-in-javax.xml.ws.api-optional-i.patch
 Patch7:           0008-adding-org.hibernate.validator.patch
+Patch8:           0009-adding-org.jboss.metadata-to-minimal-build.patch
 
 BuildArch:        noarch
 
@@ -138,6 +139,7 @@ This package contains the API documentation for %{name}.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
 # We don't have packaged all test dependencies (jboss-test for example)
@@ -251,6 +253,11 @@ pushd $RPM_BUILD_ROOT%{homedir}
     ln -s $(build-classpath jboss/jboss-dmr) org/jboss/dmr/main/jboss-dmr.jar
     ln -s $(build-classpath jboss/jboss-marshalling-river) org/jboss/marshalling/river/main/jboss-marshalling-river.jar
     ln -s $(build-classpath jboss/jboss-marshalling) org/jboss/marshalling/main/jboss-marshalling.jar
+    ln -s $(build-classpath jboss/jboss-metadata-appclient) org/jboss/metadata/main/jboss-metadata-appclient.jar
+    ln -s $(build-classpath jboss/jboss-metadata-common) org/jboss/metadata/main/jboss-metadata-common.jar
+    ln -s $(build-classpath jboss/jboss-metadata-ear) org/jboss/metadata/main/jboss-metadata-ear.jar
+    ln -s $(build-classpath jboss/jboss-metadata-ejb) org/jboss/metadata/main/jboss-metadata-ejb.jar
+    ln -s $(build-classpath jboss/jboss-metadata-web) org/jboss/metadata/main/jboss-metadata-web.jar
     ln -s $(build-classpath jboss/jboss-logging) org/jboss/logging/main/jboss-logging.jar
     ln -s $(build-classpath jboss/jboss-msc) org/jboss/msc/main/jboss-msc.jar
     ln -s $(build-classpath jboss/jboss-threads) org/jboss/threads/main/jboss-threads.jar
