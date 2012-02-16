@@ -32,6 +32,7 @@ Patch5:           0006-adding-javax.validation-to-build.xml.patch
 Patch6:           0007-making-the-dependency-in-javax.xml.ws.api-optional-i.patch
 Patch7:           0008-adding-org.hibernate.validator.patch
 Patch8:           0009-adding-org.jboss.metadata-to-minimal-build.patch
+Patch9:           0010-adding-org.jboss.ejb3-module-to-minimal-build.patch
 
 BuildArch:        noarch
 
@@ -140,6 +141,7 @@ This package contains the API documentation for %{name}.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %build
 # We don't have packaged all test dependencies (jboss-test for example)
@@ -251,6 +253,7 @@ pushd $RPM_BUILD_ROOT%{homedir}
     ln -s $(build-classpath jboss/jboss-interceptors-1.1-api) javax/interceptor/api/main/jboss-interceptors-1.1-api.jar
     ln -s $(build-classpath jboss/jboss-remoting) org/jboss/remoting3/main/jboss-remoting.jar
     ln -s $(build-classpath jboss/jboss-dmr) org/jboss/dmr/main/jboss-dmr.jar
+    ln -s $(build-classpath jboss/jboss-ejb3-ext-api) org/jboss/ejb3/main/jboss-ejb3-ext-api.jar
     ln -s $(build-classpath jboss/jboss-marshalling-river) org/jboss/marshalling/river/main/jboss-marshalling-river.jar
     ln -s $(build-classpath jboss/jboss-marshalling) org/jboss/marshalling/main/jboss-marshalling.jar
     ln -s $(build-classpath jboss/jboss-metadata-appclient) org/jboss/metadata/main/jboss-metadata-appclient.jar
