@@ -39,7 +39,7 @@ I prepared a mock configuration file: `mock/fedora-rawhide-x86_64.cfg`. Make sur
 
 First of all build JBoss AS 7 source RPM - mock will rebuild it into a RPM.
 
-    mock -v --configdir mock/ -r fedora-rawhide-x86_64 --rebuild SRPMS/jboss-as-*.src.rpm
+    mock -v --configdir mock/ -r fedora-17-x86_64 --rebuild SRPMS/jboss-as-*.src.rpm
 
 The resulting packages: both `.rpm` and `.src.rpm` and build logs will be stored in `/var/lib/mock/fedora-rawhide-x86_64/result/` directory.
 
