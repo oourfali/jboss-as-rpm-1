@@ -1,0 +1,25 @@
+From 832384d7a839342f44cca4fa0bc74107e06374e9 Mon Sep 17 00:00:00 2001
+From: Oved Ourfali <ovedo@redhat.com>
+Date: Thu, 16 Feb 2012 16:42:11 +0200
+Subject: [PATCH 4/4] Removing logging module from the normal profile as it
+ was added to the minimal one
+
+---
+ pom.xml |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+
+diff --git a/pom.xml b/pom.xml
+index 9aaab75..a16233c 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -5973,7 +5973,6 @@
+                 <module>jdr</module>
+                 <module>jpa</module>
+                 <module>jsr77</module>
+-                <module>logging</module>
+                 <module>mail</module>
+                 <module>messaging</module>
+                 <module>modcluster</module>
+-- 
+1.7.9
+

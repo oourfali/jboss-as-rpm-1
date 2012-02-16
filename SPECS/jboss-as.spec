@@ -34,6 +34,7 @@ Patch7:           0008-adding-org.hibernate.validator.patch
 Patch8:           0009-adding-org.jboss.metadata-to-minimal-build.patch
 Patch9:           0010-adding-org.jboss.ejb3-module-to-minimal-build.patch
 Patch10:          0011-adding-org.jboss.as.logging.patch
+Patch11:          0012-Removing-logging-module-from-the-normal-profile-as-i.patch
 
 BuildArch:        noarch
 
@@ -144,6 +145,7 @@ This package contains the API documentation for %{name}.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 %build
 # We don't have packaged all test dependencies (jboss-test for example)
