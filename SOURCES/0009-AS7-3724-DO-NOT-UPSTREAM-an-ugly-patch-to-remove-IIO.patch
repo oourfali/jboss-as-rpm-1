@@ -1,0 +1,882 @@
+From 41efa6ce071a08e7eab24d7df392c2b9637703f4 Mon Sep 17 00:00:00 2001
+From: Carlo de Wolf <cdewolf@redhat.com>
+Date: Wed, 15 Feb 2012 13:32:41 +0100
+Subject: [PATCH 09/15] AS7-3724: DO NOT UPSTREAM! an ugly patch to remove
+ IIOP functionality
+
+---
+ build/build.xml                                    |    8 ++-
+ build/pom.xml                                      |   12 +++-
+ .../modules/org/jboss/as/ejb3/main/module.xml      |    4 +-
+ .../modules/org/jboss/jts/main/module.xml          |    2 +-
+ .../resources/modules/org/omg/api/main/module.xml  |    2 +-
+ ejb3/pom.xml                                       |    9 +++
+ .../ejb3/deployment/EjbDeploymentInformation.java  |   15 +++--
+ .../processors/DeploymentRepositoryProcessor.java  |    4 +-
+ .../EjbDependencyDeploymentUnitProcessor.java      |    3 +-
+ .../org/jboss/as/ejb3/subsystem/EJB3Extension.java |    9 +--
+ .../as/ejb3/subsystem/EJB3Subsystem12Parser.java   |   66 ++++++++++++++++---
+ .../jboss/as/ejb3/subsystem/EJB3SubsystemAdd.java  |   39 +++++++-----
+ .../ejb/ManagementEjbDeploymentInformation.java    |    3 +-
+ pom.xml                                            |    9 ++-
+ transactions/pom.xml                               |    9 ++-
+ .../txn/service/ArjunaRecoveryManagerService.java  |   25 +++-----
+ .../service/ArjunaTransactionManagerService.java   |   21 +++---
+ .../jboss/as/txn/service/XATerminatorService.java  |    3 +
+ .../as/txn/subsystem/TransactionSubsystemAdd.java  |    3 +-
+ 19 files changed, 167 insertions(+), 79 deletions(-)
+
+diff --git a/build/build.xml b/build/build.xml
+index 9f698f5..8e7dfd6 100644
+--- a/build/build.xml
++++ b/build/build.xml
+@@ -659,9 +659,11 @@
+             <maven-resource group="org.infinispan" artifact="infinispan-client-hotrod" />
+         </module-def>
+ 
++        <!--
+         <module-def name="org.jacorb">
+             <maven-resource group="org.jacorb" artifact="jacorb"/>
+         </module-def>
++        -->
+ 
+         <module-def name="org.javassist">
+             <maven-resource group="org.javassist" artifact="javassist"/>
+@@ -763,9 +765,11 @@
+             <maven-resource group="org.jboss.as" artifact="jboss-as-jsr77"/>
+         </module-def>
+ 
++        <!--
+         <module-def name="org.jboss.as.jacorb">
+             <maven-resource group="org.jboss.as" artifact="jboss-as-jacorb"/>
+         </module-def>
++        -->
+ 
+         <module-def name="org.jboss.as.jaxr">
+             <maven-resource group="org.jboss.as" artifact="jboss-as-jaxr"/>
+@@ -935,11 +939,11 @@
+         </module-def>
+ 
+         <module-def name="org.jboss.jts">
+-            <maven-resource group="org.jboss.jbossts" artifact="jbossjts"/>
++            <maven-resource group="org.jboss.jbossts" artifact="jbossjta"/>
+         </module-def>
+ 
+         <module-def name="org.jboss.jts.integration">
+-            <maven-resource group="org.jboss.jbossts" artifact="jbossjts-integration"/>
++            <maven-resource group="org.jboss.jbossts" artifact="jbossjta-integration"/>
+         </module-def>
+ 
+         <module-def name="org.jboss.metadata">
+diff --git a/build/pom.xml b/build/pom.xml
+index 681b2a6..df54020 100644
+--- a/build/pom.xml
++++ b/build/pom.xml
+@@ -273,10 +273,12 @@
+                     <artifactId>getopt</artifactId>
+                 </dependency>
+ 
++                <!--
+                 <dependency>
+                     <groupId>org.jacorb</groupId>
+                     <artifactId>jacorb</artifactId>
+                 </dependency>
++                -->
+ 
+                 <dependency>
+                     <groupId>javax.activation</groupId>
+@@ -850,10 +852,12 @@
+                     <artifactId>jboss-as-host-controller</artifactId>
+                 </dependency>
+ 
++                <!--
+                 <dependency>
+                     <groupId>org.jboss.as</groupId>
+                     <artifactId>jboss-as-jacorb</artifactId>
+                 </dependency>
++                -->
+ 
+                 <dependency>
+                     <groupId>org.jboss.as</groupId>
+@@ -955,10 +959,12 @@
+                     <artifactId>jboss-as-webservices-server-integration</artifactId>
+                 </dependency>
+ 
++                <!--
+                 <dependency>
+                     <groupId>org.jboss.as</groupId>
+                     <artifactId>jboss-as-xts</artifactId>
+                 </dependency>
++                -->
+ 
+                 <dependency>
+                     <groupId>org.jboss.classfilewriter</groupId>
+@@ -1077,12 +1083,12 @@
+ 
+                 <dependency>
+                     <groupId>org.jboss.jbossts</groupId>
+-                    <artifactId>jbossjts</artifactId>
++                    <artifactId>jbossjta</artifactId>
+                 </dependency>
+ 
+                 <dependency>
+                     <groupId>org.jboss.jbossts</groupId>
+-                    <artifactId>jbossjts-integration</artifactId>
++                    <artifactId>jbossjta-integration</artifactId>
+                 </dependency>
+ 
+                 <dependency>
+@@ -1090,6 +1096,7 @@
+                     <artifactId>jbosstxbridge</artifactId>
+                 </dependency>
+ 
++                <!--
+                 <dependency>
+                     <groupId>org.jboss.jbossts</groupId>
+                     <artifactId>jbossxts</artifactId>
+@@ -1099,6 +1106,7 @@
+                     <groupId>org.jboss.jbossts</groupId>
+                     <artifactId>jbossxts-api</artifactId>
+                 </dependency>
++                -->
+ 
+                 <dependency>
+                     <groupId>org.jboss.metadata</groupId>
+diff --git a/build/src/main/resources/modules/org/jboss/as/ejb3/main/module.xml b/build/src/main/resources/modules/org/jboss/as/ejb3/main/module.xml
+index 8bdf514..de651d6 100644
+--- a/build/src/main/resources/modules/org/jboss/as/ejb3/main/module.xml
++++ b/build/src/main/resources/modules/org/jboss/as/ejb3/main/module.xml
+@@ -41,7 +41,7 @@
+         <module name="javax.resource.api"/>
+         <module name="javax.rmi.api"/>
+         <module name="org.hibernate"/>
+-        <module name="org.jacorb"/>
++        <module name="org.jacorb" optional="true"/>
+         <module name="org.jboss.as.clustering.api"/>
+         <module name="org.jboss.as.clustering.ejb3.infinispan" services="import" optional="true"/>
+         <module name="org.jboss.as.clustering.infinispan"/>
+@@ -51,7 +51,7 @@
+         <!-- So we can access its integration API -->
+         <module name="org.jboss.as.connector"/>
+         <module name="org.jboss.as.ee"/>
+-        <module name="org.jboss.as.jacorb"/>
++        <module name="org.jboss.as.jacorb" optional="true"/>
+         <module name="org.jboss.as.naming"/>
+         <module name="org.jboss.as.network"/>
+         <module name="org.jboss.as.remoting"/>
+diff --git a/build/src/main/resources/modules/org/jboss/jts/main/module.xml b/build/src/main/resources/modules/org/jboss/jts/main/module.xml
+index f1d90c2..eaee13e 100644
+--- a/build/src/main/resources/modules/org/jboss/jts/main/module.xml
++++ b/build/src/main/resources/modules/org/jboss/jts/main/module.xml
+@@ -41,6 +41,6 @@
+         <module name="javax.transaction.api"/>
+         <module name="javax.resource.api"/>
+         <module name="org.hornetq"/>
+-        <module name="org.jacorb"/>
++        <module name="org.jacorb" optional="true"/>
+     </dependencies>
+ </module>
+diff --git a/build/src/main/resources/modules/org/omg/api/main/module.xml b/build/src/main/resources/modules/org/omg/api/main/module.xml
+index 45a37ee..eb2e8f4 100644
+--- a/build/src/main/resources/modules/org/omg/api/main/module.xml
++++ b/build/src/main/resources/modules/org/omg/api/main/module.xml
+@@ -23,7 +23,7 @@
+   -->
+ <module xmlns="urn:jboss:module:1.1" name="org.omg.api">
+     <dependencies>
+-        <module name="org.jacorb" export="false">
++        <module name="org.jacorb" export="false" optional="true">
+             <exports>
+                 <include-set>
+                     <path name="org/omg/ATLAS"/>
+diff --git a/ejb3/pom.xml b/ejb3/pom.xml
+index 0896e09..8656484 100644
+--- a/ejb3/pom.xml
++++ b/ejb3/pom.xml
+@@ -47,6 +47,13 @@ vi:ts=4:sw=4:expandtab
+                     <compilerArgument>
+                         -AgeneratedTranslationFilesPath=${project.build.directory}/generated-translation-files
+                     </compilerArgument>
++                    <excludes>
++                        <exclude>**/*IIOP*.java</exclude>
++                        <exclude>**/*iiop*/*.java</exclude>
++                        <exclude>org/jboss/as/ejb3/deployment/processors/*IIOP*.java</exclude>
++                        <exclude>org/jboss/as/ejb3/iiop/**/*.java</exclude>
++                    </excludes>
++                    <verbose>true</verbose>
+                 </configuration>
+             </plugin>
+             <plugin>
+@@ -90,10 +97,12 @@ vi:ts=4:sw=4:expandtab
+             <artifactId>jboss-as-ee</artifactId>
+         </dependency>
+ 
++        <!--
+         <dependency>
+             <groupId>${project.groupId}</groupId>
+             <artifactId>jboss-as-jacorb</artifactId>
+         </dependency>
++        -->
+ 
+         <dependency>
+             <groupId>${project.groupId}</groupId>
+diff --git a/ejb3/src/main/java/org/jboss/as/ejb3/deployment/EjbDeploymentInformation.java b/ejb3/src/main/java/org/jboss/as/ejb3/deployment/EjbDeploymentInformation.java
+index 370747e..8f2858f 100644
+--- a/ejb3/src/main/java/org/jboss/as/ejb3/deployment/EjbDeploymentInformation.java
++++ b/ejb3/src/main/java/org/jboss/as/ejb3/deployment/EjbDeploymentInformation.java
+@@ -1,13 +1,12 @@
+ package org.jboss.as.ejb3.deployment;
+ 
++import java.util.Collection;
++import java.util.Map;
++
+ import org.jboss.as.ee.component.ComponentView;
+ import org.jboss.as.ejb3.component.EJBComponent;
+-import org.jboss.as.ejb3.iiop.EjbIIOPService;
+ import org.jboss.msc.value.InjectedValue;
+ 
+-import java.util.Collection;
+-import java.util.Map;
+-
+ /**
+  * Runtime information about an EJB in a module
+  *
+@@ -23,14 +22,18 @@ public class EjbDeploymentInformation {
+ 
+     private final Map<String, InjectedValue<ComponentView>> componentViews;
+ 
++    /*
+     private final InjectedValue<EjbIIOPService> iorFactory;
++    */
+ 
+-    public EjbDeploymentInformation(final String ejbName, final InjectedValue<EJBComponent> ejbComponent, final Map<String, InjectedValue<ComponentView>> componentViews, final ClassLoader deploymentClassLoader, final InjectedValue<EjbIIOPService> iorFactory) {
++    public EjbDeploymentInformation(final String ejbName, final InjectedValue<EJBComponent> ejbComponent, final Map<String, InjectedValue<ComponentView>> componentViews, final ClassLoader deploymentClassLoader, final InjectedValue<?> iorFactory) {
+         this.ejbName = ejbName;
+         this.ejbComponent = ejbComponent;
+         this.componentViews = componentViews;
+         this.deploymentClassLoader = deploymentClassLoader;
++        /*
+         this.iorFactory = iorFactory;
++        */
+     }
+ 
+     public String getEjbName() {
+@@ -57,7 +60,9 @@ public class EjbDeploymentInformation {
+         return deploymentClassLoader;
+     }
+ 
++    /*
+     public EjbIIOPService getIorFactory() {
+         return iorFactory.getOptionalValue();
+     }
++    */
+ }
+diff --git a/ejb3/src/main/java/org/jboss/as/ejb3/deployment/processors/DeploymentRepositoryProcessor.java b/ejb3/src/main/java/org/jboss/as/ejb3/deployment/processors/DeploymentRepositoryProcessor.java
+index c956d61..f26ad5e 100644
+--- a/ejb3/src/main/java/org/jboss/as/ejb3/deployment/processors/DeploymentRepositoryProcessor.java
++++ b/ejb3/src/main/java/org/jboss/as/ejb3/deployment/processors/DeploymentRepositoryProcessor.java
+@@ -15,7 +15,6 @@ import org.jboss.as.ejb3.deployment.DeploymentModuleIdentifier;
+ import org.jboss.as.ejb3.deployment.DeploymentRepository;
+ import org.jboss.as.ejb3.deployment.EjbDeploymentInformation;
+ import org.jboss.as.ejb3.deployment.ModuleDeployment;
+-import org.jboss.as.ejb3.iiop.EjbIIOPService;
+ import org.jboss.as.server.deployment.DeploymentPhaseContext;
+ import org.jboss.as.server.deployment.DeploymentUnit;
+ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+@@ -67,10 +66,13 @@ public class DeploymentRepositoryProcessor implements DeploymentUnitProcessor {
+                     views.put(view.getViewClassName(), componentViewInjectedValue);
+                     injectedValues.put(view.getServiceName(), componentViewInjectedValue);
+                 }
++                final InjectedValue<?> iorFactory = null;
++                /*
+                 final InjectedValue<EjbIIOPService> iorFactory = new InjectedValue<EjbIIOPService>();
+                 if (ejbComponentDescription.isExposedViaIiop()) {
+                     injectedValues.put(ejbComponentDescription.getServiceName().append(EjbIIOPService.SERVICE_NAME), iorFactory);
+                 }
++                */
+ 
+                 EjbDeploymentInformation info = new EjbDeploymentInformation(ejbComponentDescription.getEJBName(), componentInjectedValue, views, module.getClassLoader(), iorFactory);
+                 deploymentInformationMap.put(ejbComponentDescription.getEJBName(), info);
+diff --git a/ejb3/src/main/java/org/jboss/as/ejb3/deployment/processors/EjbDependencyDeploymentUnitProcessor.java b/ejb3/src/main/java/org/jboss/as/ejb3/deployment/processors/EjbDependencyDeploymentUnitProcessor.java
+index 39f8c09..3d89e4f 100644
+--- a/ejb3/src/main/java/org/jboss/as/ejb3/deployment/processors/EjbDependencyDeploymentUnitProcessor.java
++++ b/ejb3/src/main/java/org/jboss/as/ejb3/deployment/processors/EjbDependencyDeploymentUnitProcessor.java
+@@ -24,7 +24,6 @@ package org.jboss.as.ejb3.deployment.processors;
+ 
+ import org.jboss.as.ee.structure.DeploymentType;
+ import org.jboss.as.ee.structure.DeploymentTypeMarker;
+-import org.jboss.as.jacorb.deployment.JacORBDeploymentMarker;
+ import org.jboss.as.server.deployment.Attachments;
+ import org.jboss.as.server.deployment.DeploymentPhaseContext;
+ import org.jboss.as.server.deployment.DeploymentUnit;
+@@ -85,10 +84,12 @@ public class EjbDependencyDeploymentUnitProcessor implements DeploymentUnitProce
+         //we always have to add this, as even non-ejb deployments may still lookup IIOP ejb's
+         moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, EJB_SUBSYSTEM, false, false, false, false));
+ 
++        /*
+         if (JacORBDeploymentMarker.isJacORBDeployment(deploymentUnit)) {
+             //needed for dynamic IIOP stubs
+             moduleSpecification.addSystemDependency(new ModuleDependency(moduleLoader, JACORB, false, false, false, false));
+         }
++        */
+ 
+         // fetch the EjbJarMetaData
+         //TODO: remove the app client bit after the next EJB release
+diff --git a/ejb3/src/main/java/org/jboss/as/ejb3/subsystem/EJB3Extension.java b/ejb3/src/main/java/org/jboss/as/ejb3/subsystem/EJB3Extension.java
+index 70f444b..15fde92 100644
+--- a/ejb3/src/main/java/org/jboss/as/ejb3/subsystem/EJB3Extension.java
++++ b/ejb3/src/main/java/org/jboss/as/ejb3/subsystem/EJB3Extension.java
+@@ -22,10 +22,6 @@
+ 
+ package org.jboss.as.ejb3.subsystem;
+ 
+-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DESCRIBE;
+-
+-import java.util.EnumSet;
+-
+ import org.jboss.as.controller.Extension;
+ import org.jboss.as.controller.ExtensionContext;
+ import org.jboss.as.controller.PathElement;
+@@ -39,7 +35,6 @@ import org.jboss.as.controller.operations.common.GenericSubsystemDescribeHandler
+ import org.jboss.as.controller.parsing.ExtensionParsingContext;
+ import org.jboss.as.controller.registry.ManagementResourceRegistration;
+ import org.jboss.as.controller.registry.OperationEntry;
+-import org.jboss.as.controller.registry.OperationEntry.Flag;
+ import org.jboss.as.ejb3.subsystem.deployment.EntityBeanResourceDefinition;
+ import org.jboss.as.ejb3.subsystem.deployment.MessageDrivenBeanResourceDefinition;
+ import org.jboss.as.ejb3.subsystem.deployment.SingletonBeanDeploymentResourceDefinition;
+@@ -49,6 +44,8 @@ import org.jboss.as.threads.ThreadFactoryResolver;
+ import org.jboss.as.threads.ThreadsServices;
+ import org.jboss.as.threads.UnboundedQueueThreadPoolResourceDefinition;
+ 
++import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DESCRIBE;
++
+ /**
+  * Extension that provides the EJB3 subsystem.
+  *
+@@ -106,7 +103,9 @@ public class EJB3Extension implements Extension {
+                 new EJB3ThreadFactoryResolver(), EJB3SubsystemModel.BASE_THREAD_POOL_SERVICE_NAME, registerRuntimeOnly));
+ 
+         // subsystem=ejb3/service=iiop
++        /*
+         subsystemRegistration.registerSubModel(EJB3IIOPResourceDefinition.INSTANCE);
++        */
+ 
+         if (registerRuntimeOnly) {
+             ResourceDefinition deploymentsDef = new SimpleResourceDefinition(PathElement.pathElement(ModelDescriptionConstants.SUBSYSTEM, SUBSYSTEM_NAME),
+diff --git a/ejb3/src/main/java/org/jboss/as/ejb3/subsystem/EJB3Subsystem12Parser.java b/ejb3/src/main/java/org/jboss/as/ejb3/subsystem/EJB3Subsystem12Parser.java
+index e0a469e..c04f4cc 100644
+--- a/ejb3/src/main/java/org/jboss/as/ejb3/subsystem/EJB3Subsystem12Parser.java
++++ b/ejb3/src/main/java/org/jboss/as/ejb3/subsystem/EJB3Subsystem12Parser.java
+@@ -22,6 +22,15 @@
+ 
+ package org.jboss.as.ejb3.subsystem;
+ 
++import java.util.Collections;
++import java.util.EnumSet;
++import java.util.LinkedHashSet;
++import java.util.List;
++import java.util.Set;
++
++import javax.xml.stream.XMLStreamConstants;
++import javax.xml.stream.XMLStreamException;
++
+ import org.jboss.as.controller.PathAddress;
+ import org.jboss.as.controller.PathElement;
+ import org.jboss.as.controller.persistence.SubsystemMarshallingContext;
+@@ -34,20 +43,51 @@ import org.jboss.staxmapper.XMLElementWriter;
+ import org.jboss.staxmapper.XMLExtendedStreamReader;
+ import org.jboss.staxmapper.XMLExtendedStreamWriter;
+ 
+-import javax.xml.stream.XMLStreamConstants;
+-import javax.xml.stream.XMLStreamException;
+-import java.util.Collections;
+-import java.util.EnumSet;
+-import java.util.LinkedHashSet;
+-import java.util.List;
+-import java.util.Set;
+-
+-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.*;
+-import static org.jboss.as.controller.parsing.ParseUtils.*;
+-import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.*;
++import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
++import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
++import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
++import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
++import static org.jboss.as.controller.parsing.ParseUtils.duplicateAttribute;
++import static org.jboss.as.controller.parsing.ParseUtils.missingRequired;
++import static org.jboss.as.controller.parsing.ParseUtils.readStringAttributeElement;
++import static org.jboss.as.controller.parsing.ParseUtils.requireNoAttributes;
++import static org.jboss.as.controller.parsing.ParseUtils.requireNoContent;
++import static org.jboss.as.controller.parsing.ParseUtils.requireNoNamespaceAttribute;
++import static org.jboss.as.controller.parsing.ParseUtils.unexpectedAttribute;
++import static org.jboss.as.controller.parsing.ParseUtils.unexpectedElement;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.ALIASES;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.ASYNC;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.BEAN_CACHE;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.CACHE;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.CACHE_CONTAINER;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.CLIENT_MAPPINGS_CACHE;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.CLUSTER_PASSIVATION_STORE;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.DEFAULT_CLUSTERED_SFSB_CACHE;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.DEFAULT_SFSB_CACHE;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.DEFAULT_SINGLETON_BEAN_ACCESS_TIMEOUT;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.DEFAULT_STATEFUL_BEAN_ACCESS_TIMEOUT;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.FILE_PASSIVATION_STORE;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.GROUPS_PATH;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.IDLE_TIMEOUT;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.IDLE_TIMEOUT_UNIT;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.IIOP;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.INSTANCE_ACQUISITION_TIMEOUT;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.INSTANCE_ACQUISITION_TIMEOUT_UNIT;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.IN_VM_REMOTE_INTERFACE_INVOCATION_PASS_BY_VALUE;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.MAX_POOL_SIZE;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.MAX_SIZE;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.PASSIVATE_EVENTS_ON_REPLICATE;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.PASSIVATION_STORE;
+ import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.PATH;
+ import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.RELATIVE_TO;
+ import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.REMOTE;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.SERVICE;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.SESSIONS_PATH;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.STRICT_MAX_BEAN_INSTANCE_POOL;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.SUBDIRECTORY_COUNT;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.THREAD_POOL;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.THREAD_POOL_NAME;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.TIMER_SERVICE;
+ 
+ /**
+  * @author Jaikiran Pai
+@@ -218,8 +258,10 @@ public class EJB3Subsystem12Parser implements XMLElementReader<List<ModelNode>>,
+     }
+ 
+     private void writeIIOP(final XMLExtendedStreamWriter writer, final ModelNode model) throws XMLStreamException {
++        /*
+         EJB3IIOPResourceDefinition.ENABLE_BY_DEFAULT.marshallAsAttribute(model, writer);
+         EJB3IIOPResourceDefinition.USE_QUALIFIED_NAME.marshallAsAttribute(model, writer);
++        */
+     }
+ 
+     private void writeThreadPools(final XMLExtendedStreamWriter writer, final ModelNode threadPoolsModel) throws XMLStreamException {
+@@ -565,6 +607,7 @@ public class EJB3Subsystem12Parser implements XMLElementReader<List<ModelNode>>,
+     }
+ 
+     private void parseIIOP(final XMLExtendedStreamReader reader, List<ModelNode> operations) throws XMLStreamException {
++        /*
+         final int count = reader.getAttributeCount();
+         boolean enableByDefault = true;
+         boolean useQualifiedName = true;
+@@ -590,6 +633,7 @@ public class EJB3Subsystem12Parser implements XMLElementReader<List<ModelNode>>,
+         }
+         requireNoContent(reader);
+         operations.add(EJB3IIOPAdd.create(enableByDefault, useQualifiedName));
++        */
+     }
+ 
+     private void parseMDB(final XMLExtendedStreamReader reader, List<ModelNode> operations, final ModelNode ejb3SubsystemAddOperation) throws XMLStreamException {
+diff --git a/ejb3/src/main/java/org/jboss/as/ejb3/subsystem/EJB3SubsystemAdd.java b/ejb3/src/main/java/org/jboss/as/ejb3/subsystem/EJB3SubsystemAdd.java
+index 63814bc..a3fd636 100644
+--- a/ejb3/src/main/java/org/jboss/as/ejb3/subsystem/EJB3SubsystemAdd.java
++++ b/ejb3/src/main/java/org/jboss/as/ejb3/subsystem/EJB3SubsystemAdd.java
+@@ -22,6 +22,12 @@
+ 
+ package org.jboss.as.ejb3.subsystem;
+ 
++import java.util.List;
++
++import javax.transaction.TransactionManager;
++import javax.transaction.TransactionSynchronizationRegistry;
++import javax.transaction.UserTransaction;
++
+ import org.jboss.as.clustering.registry.RegistryCollector;
+ import org.jboss.as.clustering.registry.RegistryCollectorService;
+ import org.jboss.as.connector.ConnectorServices;
+@@ -33,11 +39,11 @@ import org.jboss.as.controller.ServiceVerificationHandler;
+ import org.jboss.as.ejb3.cache.impl.backing.clustering.ClusteredBackingCacheEntryStoreSourceService;
+ import org.jboss.as.ejb3.component.EJBUtilities;
+ import org.jboss.as.ejb3.deployment.DeploymentRepository;
++import org.jboss.as.ejb3.deployment.processors.AnnotatedEJBComponentDescriptionDeploymentUnitProcessor;
+ import org.jboss.as.ejb3.deployment.processors.ApplicationExceptionAnnotationProcessor;
+ import org.jboss.as.ejb3.deployment.processors.BusinessViewAnnotationProcessor;
+ import org.jboss.as.ejb3.deployment.processors.DeploymentRepositoryProcessor;
+ import org.jboss.as.ejb3.deployment.processors.EJBClientDescriptorMetaDataProcessor;
+-import org.jboss.as.ejb3.deployment.processors.AnnotatedEJBComponentDescriptionDeploymentUnitProcessor;
+ import org.jboss.as.ejb3.deployment.processors.EjbCleanUpProcessor;
+ import org.jboss.as.ejb3.deployment.processors.EjbClientContextSetupProcessor;
+ import org.jboss.as.ejb3.deployment.processors.EjbContextJndiBindingProcessor;
+@@ -47,7 +53,6 @@ import org.jboss.as.ejb3.deployment.processors.EjbJndiBindingsDeploymentUnitProc
+ import org.jboss.as.ejb3.deployment.processors.EjbManagementDeploymentUnitProcessor;
+ import org.jboss.as.ejb3.deployment.processors.EjbRefProcessor;
+ import org.jboss.as.ejb3.deployment.processors.EjbResourceInjectionAnnotationProcessor;
+-import org.jboss.as.ejb3.deployment.processors.IIOPJndiBindingProcessor;
+ import org.jboss.as.ejb3.deployment.processors.ImplicitLocalViewProcessor;
+ import org.jboss.as.ejb3.deployment.processors.PassivationAnnotationParsingProcessor;
+ import org.jboss.as.ejb3.deployment.processors.SessionBeanHomeProcessor;
+@@ -85,14 +90,9 @@ import org.jboss.as.ejb3.deployment.processors.merging.StatelessSessionBeanPoolM
+ import org.jboss.as.ejb3.deployment.processors.merging.TransactionAttributeMergingProcessor;
+ import org.jboss.as.ejb3.deployment.processors.merging.TransactionManagementMergingProcessor;
+ import org.jboss.as.ejb3.deployment.processors.security.JaccEjbDeploymentProcessor;
+-import org.jboss.as.ejb3.iiop.POARegistry;
+-import org.jboss.as.ejb3.iiop.RemoteObjectSubstitutionService;
+-import org.jboss.as.ejb3.iiop.stub.DynamicStubFactoryFactory;
+ import org.jboss.as.ejb3.remote.DefaultEjbClientContextService;
+ import org.jboss.as.ejb3.remote.LocalEjbReceiver;
+ import org.jboss.as.ejb3.remote.TCCLEJBClientContextSelectorService;
+-import org.jboss.as.jacorb.rmi.DelegatingStubFactoryFactory;
+-import org.jboss.as.jacorb.service.CorbaPOAService;
+ import org.jboss.as.naming.InitialContext;
+ import org.jboss.as.network.ClientMapping;
+ import org.jboss.as.security.service.SimpleSecurityManager;
+@@ -102,7 +102,6 @@ import org.jboss.as.server.DeploymentProcessorTarget;
+ import org.jboss.as.server.ServerEnvironment;
+ import org.jboss.as.server.deployment.Phase;
+ import org.jboss.as.txn.service.TxnServices;
+-import org.jboss.com.sun.corba.se.impl.javax.rmi.RemoteObjectSubstitutionManager;
+ import org.jboss.dmr.ModelNode;
+ import org.jboss.ejb.client.EJBClientContext;
+ import org.jboss.ejb.client.naming.ejb.EjbNamingContextSetup;
+@@ -111,14 +110,17 @@ import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
+ import org.jboss.msc.service.ServiceBuilder;
+ import org.jboss.msc.service.ServiceController;
+ import org.jboss.msc.service.ServiceTarget;
+-import org.omg.PortableServer.POA;
+ 
+-import javax.transaction.TransactionManager;
+-import javax.transaction.TransactionSynchronizationRegistry;
+-import javax.transaction.UserTransaction;
+-import java.util.List;
+-
+-import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.*;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.DEFAULT_CLUSTERED_SFSB_CACHE;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.DEFAULT_ENTITY_BEAN_INSTANCE_POOL;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.DEFAULT_ENTITY_BEAN_OPTIMISTIC_LOCKING;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.DEFAULT_MDB_INSTANCE_POOL;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.DEFAULT_RESOURCE_ADAPTER_NAME;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.DEFAULT_SFSB_CACHE;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.DEFAULT_SINGLETON_BEAN_ACCESS_TIMEOUT;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.DEFAULT_SLSB_INSTANCE_POOL;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.DEFAULT_STATEFUL_BEAN_ACCESS_TIMEOUT;
++import static org.jboss.as.ejb3.subsystem.EJB3SubsystemModel.IN_VM_REMOTE_INTERFACE_INVOCATION_PASS_BY_VALUE;
+ 
+ /**
+  * Add operation handler for the EJB3 subsystem.
+@@ -149,7 +151,7 @@ class EJB3SubsystemAdd extends AbstractBoottimeAddStepHandler {
+ 
+     @Override
+     protected void performBoottime(final OperationContext context, ModelNode operation, final ModelNode model, ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers) throws OperationFailedException {
+-
++        /*
+         //setup IIOP related stuff
+         //This goes here rather than in EJB3IIOPAdd as it affects the server when it is acting as an iiop client
+         //setup our dynamic stub factory
+@@ -162,6 +164,7 @@ class EJB3SubsystemAdd extends AbstractBoottimeAddStepHandler {
+                 .install());
+ 
+         RemoteObjectSubstitutionManager.setRemoteObjectSubstitution(substitutionService);
++        */
+ 
+         //setup ejb: namespace
+         EjbNamingContextSetup.setupEjbNamespace();
+@@ -189,7 +192,9 @@ class EJB3SubsystemAdd extends AbstractBoottimeAddStepHandler {
+                 processorTarget.addDeploymentProcessor(Phase.POST_MODULE, Phase.POST_MODULE_EJB_REF, new EjbRefProcessor(appclient));
+                 processorTarget.addDeploymentProcessor(Phase.POST_MODULE, Phase.POST_MODULE_EJB_CLIENT_CONTEXT_SETUP, new EjbClientContextSetupProcessor());
+                 processorTarget.addDeploymentProcessor(Phase.POST_MODULE, Phase.POST_MODULE_EJB_BUSINESS_VIEW_ANNOTATION, new BusinessViewAnnotationProcessor(appclient));
++                /*
+                 processorTarget.addDeploymentProcessor(Phase.POST_MODULE, Phase.POST_MODULE_EJB_ORB_BIND, new IIOPJndiBindingProcessor());
++                */
+                 processorTarget.addDeploymentProcessor(Phase.POST_MODULE, Phase.POST_MODULE_EJB_JNDI_BINDINGS, new EjbJndiBindingsDeploymentUnitProcessor(appclient));
+ 
+                 processorTarget.addDeploymentProcessor(Phase.INSTALL, Phase.INSTALL_EJB_JACC_PROCESSING, new JaccEjbDeploymentProcessor());
+@@ -298,6 +303,7 @@ class EJB3SubsystemAdd extends AbstractBoottimeAddStepHandler {
+                     .install());
+ 
+ 
++            /*
+             // create the POA Registry use by iiop
+             final POARegistry poaRegistry = new POARegistry();
+             newControllers.add(context.getServiceTarget().addService(POARegistry.SERVICE_NAME, poaRegistry)
+@@ -305,6 +311,7 @@ class EJB3SubsystemAdd extends AbstractBoottimeAddStepHandler {
+                     .setInitialMode(ServiceController.Mode.PASSIVE)
+                     .addListener(verificationHandler)
+                     .install());
++            */
+         }
+     }
+ 
+diff --git a/jsr77/src/main/java/org/jboss/as/jsr77/ejb/ManagementEjbDeploymentInformation.java b/jsr77/src/main/java/org/jboss/as/jsr77/ejb/ManagementEjbDeploymentInformation.java
+index 24bd92b..f2360c7 100644
+--- a/jsr77/src/main/java/org/jboss/as/jsr77/ejb/ManagementEjbDeploymentInformation.java
++++ b/jsr77/src/main/java/org/jboss/as/jsr77/ejb/ManagementEjbDeploymentInformation.java
+@@ -26,7 +26,6 @@ import java.util.Map;
+ import org.jboss.as.ee.component.ComponentView;
+ import org.jboss.as.ejb3.component.EJBComponent;
+ import org.jboss.as.ejb3.deployment.EjbDeploymentInformation;
+-import org.jboss.as.ejb3.iiop.EjbIIOPService;
+ import org.jboss.msc.value.InjectedValue;
+ 
+ /**
+@@ -38,7 +37,7 @@ public class ManagementEjbDeploymentInformation extends EjbDeploymentInformation
+ 
+     public ManagementEjbDeploymentInformation(String ejbName, Map<String, InjectedValue<ComponentView>> componentViews, ClassLoader deploymentClassLoader) {
+         // FIXME ManagementEjbDeploymentInformation constructor
+-        super(ejbName, new InjectedValue<EJBComponent>(), componentViews, deploymentClassLoader, new InjectedValue<EjbIIOPService>());
++        super(ejbName, new InjectedValue<EJBComponent>(), componentViews, deploymentClassLoader, new InjectedValue());
+     }
+ 
+     @Override
+diff --git a/pom.xml b/pom.xml
+index b240159..c773521 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -392,6 +392,7 @@
+                                             <exclude>org.apache.xalan:xalan</exclude>
+                                             <exclude>org.hibernate:ejb3-persistence</exclude>
+                                             <exclude>org.hibernate.java-persistence:jpa-api</exclude>
++                                            <exclude>org.jacorb:jacorb</exclude>
+                                             <exclude>org.jboss.integration:jboss-jca-spi</exclude>
+                                             <exclude>org.jboss.interceptor:jboss-interceptor-api</exclude>
+                                             <exclude>org.jboss.javaee:jboss-javaee</exclude>
+@@ -3633,7 +3634,7 @@
+ 
+             <dependency>
+                 <groupId>org.jboss.jbossts</groupId>
+-                <artifactId>jbossjts</artifactId>
++                <artifactId>jbossjta</artifactId>
+                 <version>${version.org.jboss.jbossts.jbossjts}</version>
+                 <exclusions>
+                     <exclusion>
+@@ -3765,7 +3766,7 @@
+ 
+             <dependency>
+                 <groupId>org.jboss.jbossts</groupId>
+-                <artifactId>jbossjts-integration</artifactId>
++                <artifactId>jbossjta-integration</artifactId>
+                 <version>${version.org.jboss.jbossts.jbossjts-integration}</version>
+                 <exclusions>
+                     <exclusion>
+@@ -5923,7 +5924,9 @@
+                 <module>dist</module>
+                 <module>ejb3</module>
+                 <module>host-controller</module>
++                <!--
+                 <module>jacorb</module>
++                -->
+                 <module>jaxr</module>
+                 <module>jaxrs</module>
+                 <module>jdr</module>
+@@ -5943,7 +5946,9 @@
+                 <module>web</module>
+                 <module>webservices</module>
+                 <module>weld</module>
++                <!--
+                 <module>xts</module>
++                -->
+                 <module>testsuite/shared</module>
+                 <module>testsuite</module>
+             </modules>
+diff --git a/transactions/pom.xml b/transactions/pom.xml
+index b20e896..491b36e 100644
+--- a/transactions/pom.xml
++++ b/transactions/pom.xml
+@@ -46,17 +46,19 @@
+             <groupId>org.jboss.as</groupId>
+             <artifactId>jboss-as-server</artifactId>
+         </dependency>
++        <!--
+         <dependency>
+             <groupId>org.jacorb</groupId>
+             <artifactId>jacorb</artifactId>
+         </dependency>
++        -->
+         <dependency>
+             <groupId>org.jboss</groupId>
+             <artifactId>jboss-transaction-spi</artifactId>
+         </dependency>
+         <dependency>
+             <groupId>org.jboss.jbossts</groupId>
+-            <artifactId>jbossjts</artifactId>
++            <artifactId>jbossjta</artifactId>
+             <exclusions>
+               <exclusion>
+                  <groupId>org.jboss.ironjacamar</groupId>
+@@ -66,7 +68,7 @@
+         </dependency>
+         <dependency>
+             <groupId>org.jboss.jbossts</groupId>
+-            <artifactId>jbossjts-integration</artifactId>
++            <artifactId>jbossjta-integration</artifactId>
+             <exclusions>
+               <exclusion>
+                  <groupId>org.jboss.ironjacamar</groupId>
+@@ -108,6 +110,9 @@
+                     <compilerArgument>
+                         -AgeneratedTranslationFilesPath=${project.basedir}/target/generated-translation-files
+                     </compilerArgument>
++                    <excludes>
++                        <exclude>org/jboss/iiop/**/*.java</exclude>
++                    </excludes>
+                 </configuration>
+             </plugin>
+         </plugins>
+diff --git a/transactions/src/main/java/org/jboss/as/txn/service/ArjunaRecoveryManagerService.java b/transactions/src/main/java/org/jboss/as/txn/service/ArjunaRecoveryManagerService.java
+index 47adc72..e882aca 100644
+--- a/transactions/src/main/java/org/jboss/as/txn/service/ArjunaRecoveryManagerService.java
++++ b/transactions/src/main/java/org/jboss/as/txn/service/ArjunaRecoveryManagerService.java
+@@ -23,9 +23,14 @@
+ package org.jboss.as.txn.service;
+ 
+ import java.util.ArrayList;
+-import java.util.Collections;
+ import java.util.List;
+ 
++import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
++import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
++import com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule;
++import com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner;
++import com.arjuna.ats.internal.txoj.recovery.TORecoveryModule;
++import com.arjuna.ats.jbossatx.jta.RecoveryManagerService;
+ import org.jboss.as.network.SocketBinding;
+ import org.jboss.msc.inject.Injector;
+ import org.jboss.msc.service.Service;
+@@ -36,19 +41,6 @@ import org.jboss.msc.service.StopContext;
+ import org.jboss.msc.value.InjectedValue;
+ import org.omg.CORBA.ORB;
+ 
+-import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
+-import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
+-import com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule;
+-import com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner;
+-import com.arjuna.ats.internal.jts.recovery.contact.ExpiredContactScanner;
+-import com.arjuna.ats.internal.jts.recovery.transactions.ExpiredServerScanner;
+-import com.arjuna.ats.internal.jts.recovery.transactions.ExpiredToplevelScanner;
+-import com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule;
+-import com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule;
+-import com.arjuna.ats.internal.txoj.recovery.TORecoveryModule;
+-import com.arjuna.ats.jbossatx.jta.RecoveryManagerService;
+-import com.arjuna.orbportability.internal.utils.PostInitLoader;
+-
+ import static org.jboss.as.txn.TransactionMessages.MESSAGES;
+ 
+ /**
+@@ -111,6 +103,7 @@ public class ArjunaRecoveryManagerService implements Service<RecoveryManagerServ
+ 
+             this.recoveryManagerService = recoveryManagerService;
+         } else {
++            /*
+             final ORB orb = orbInjector.getValue();
+             new PostInitLoader(PostInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb"), orb);
+ 
+@@ -133,6 +126,8 @@ public class ArjunaRecoveryManagerService implements Service<RecoveryManagerServ
+             } catch (Exception e) {
+                 throw MESSAGES.managerStartFailure(e, "Recovery");
+             }
++            */
++            throw new RuntimeException("JTS not available");
+         }
+     }
+ 
+@@ -161,4 +156,4 @@ public class ArjunaRecoveryManagerService implements Service<RecoveryManagerServ
+     public Injector<SocketBinding> getStatusBindingInjector() {
+         return statusBindingInjector;
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/transactions/src/main/java/org/jboss/as/txn/service/ArjunaTransactionManagerService.java b/transactions/src/main/java/org/jboss/as/txn/service/ArjunaTransactionManagerService.java
+index 789d7e6..a5bdeca 100644
+--- a/transactions/src/main/java/org/jboss/as/txn/service/ArjunaTransactionManagerService.java
++++ b/transactions/src/main/java/org/jboss/as/txn/service/ArjunaTransactionManagerService.java
+@@ -22,13 +22,18 @@
+ 
+ package org.jboss.as.txn.service;
+ 
+-import static org.jboss.as.txn.TransactionMessages.MESSAGES;
+-
+ import java.util.Arrays;
+ import java.util.Collections;
+ import java.util.HashMap;
+ import java.util.Map;
+ 
++import com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean;
++import com.arjuna.ats.arjuna.common.arjPropertyManager;
++import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
++import com.arjuna.ats.internal.jta.recovery.arjunacore.JTANodeNameXAResourceOrphanFilter;
++import com.arjuna.ats.internal.jta.recovery.arjunacore.JTATransactionLogXAResourceOrphanFilter;
++import com.arjuna.ats.jta.common.JTAEnvironmentBean;
++import com.arjuna.ats.jta.common.jtaPropertyManager;
+ import org.jboss.msc.inject.Injector;
+ import org.jboss.msc.service.Service;
+ import org.jboss.msc.service.ServiceName;
+@@ -42,14 +47,7 @@ import org.jboss.tm.usertx.UserTransactionRegistry;
+ import org.jboss.tm.usertx.client.ServerVMClientUserTransaction;
+ import org.omg.CORBA.ORB;
+ 
+-import com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean;
+-import com.arjuna.ats.arjuna.common.arjPropertyManager;
+-import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
+-import com.arjuna.ats.internal.jta.recovery.arjunacore.JTANodeNameXAResourceOrphanFilter;
+-import com.arjuna.ats.internal.jta.recovery.arjunacore.JTATransactionLogXAResourceOrphanFilter;
+-import com.arjuna.ats.jta.common.JTAEnvironmentBean;
+-import com.arjuna.ats.jta.common.jtaPropertyManager;
+-import com.arjuna.orbportability.internal.utils.PostInitLoader;
++import static org.jboss.as.txn.TransactionMessages.MESSAGES;
+ 
+ /**
+  * A service for the proprietary Arjuna {@link com.arjuna.ats.jbossatx.jta.TransactionManagerService}
+@@ -126,6 +124,7 @@ public final class ArjunaTransactionManagerService implements Service<com.arjuna
+             service.start();
+             value = service;
+         } else {
++            /*
+             final ORB orb = orbInjector.getValue();
+             new PostInitLoader(PostInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb"), orb);
+ 
+@@ -154,6 +153,8 @@ public final class ArjunaTransactionManagerService implements Service<com.arjuna
+                 throw MESSAGES.startFailure(e);
+             }
+             value = service;
++            */
++            throw new RuntimeException("JTS not available");
+         }
+ 
+         try {
+diff --git a/transactions/src/main/java/org/jboss/as/txn/service/XATerminatorService.java b/transactions/src/main/java/org/jboss/as/txn/service/XATerminatorService.java
+index 084cf58..9ae11fb 100644
+--- a/transactions/src/main/java/org/jboss/as/txn/service/XATerminatorService.java
++++ b/transactions/src/main/java/org/jboss/as/txn/service/XATerminatorService.java
+@@ -45,7 +45,10 @@ public final class XATerminatorService implements Service<JBossXATerminator> {
+ 
+     public void start(final StartContext context) throws StartException {
+         if (jts) {
++            /*
+             value = new com.arjuna.ats.internal.jbossatx.jts.jca.XATerminator();
++            */
++            throw new RuntimeException("JTS not available");
+         } else {
+             value = new com.arjuna.ats.internal.jbossatx.jta.jca.XATerminator();
+         }
+diff --git a/transactions/src/main/java/org/jboss/as/txn/subsystem/TransactionSubsystemAdd.java b/transactions/src/main/java/org/jboss/as/txn/subsystem/TransactionSubsystemAdd.java
+index eb44134..aac21dc 100644
+--- a/transactions/src/main/java/org/jboss/as/txn/subsystem/TransactionSubsystemAdd.java
++++ b/transactions/src/main/java/org/jboss/as/txn/subsystem/TransactionSubsystemAdd.java
+@@ -28,7 +28,6 @@ import javax.transaction.TransactionSynchronizationRegistry;
+ 
+ import com.arjuna.ats.internal.arjuna.utils.UuidProcessId;
+ import com.arjuna.ats.jbossatx.jta.RecoveryManagerService;
+-import com.arjuna.ats.jts.common.jtsPropertyManager;
+ import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
+ import org.jboss.as.controller.OperationContext;
+ import org.jboss.as.controller.OperationFailedException;
+@@ -180,7 +179,9 @@ class TransactionSubsystemAdd extends AbstractBoottimeAddStepHandler {
+         //always propagate the transaction context
+         //TODO: need a better way to do this, but this value gets cached in a static
+         //so we need to make sure we set it before anything tries to read it
++        /* if (jts) ?
+         jtsPropertyManager.getJTSEnvironmentBean().setAlwaysPropagateContext(true);
++        */
+ 
+         context.addStep(new AbstractDeploymentChainStep() {
+             protected void execute(final DeploymentProcessorTarget processorTarget) {
+-- 
+1.7.9
+

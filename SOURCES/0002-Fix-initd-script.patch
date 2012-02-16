@@ -1,7 +1,7 @@
 From d9181497b30c04ab6ab061270adbd225139f385e Mon Sep 17 00:00:00 2001
 From: Marek Goldmann <goldmann@fedoraproject.org>
 Date: Thu, 26 Jan 2012 08:58:59 -0500
-Subject: [PATCH 2/6] Fix initd script
+Subject: [PATCH 02/15] Fix initd script
 
 ---
  build/src/main/resources/bin/init.d/jboss-as.conf |    6 +++++-
@@ -29,5 +29,5 @@ index 0bfc942..72a356b 100644
 +#
 +JBOSS_CONFIG=standalone-minimalistic.xml
 -- 
-1.7.7.6
+1.7.9
 

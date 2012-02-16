@@ -1,7 +1,7 @@
 From 097a39a485b8105091c7e3fbba6a50a571a9d4f2 Mon Sep 17 00:00:00 2001
 From: Marek Goldmann <goldmann@fedoraproject.org>
 Date: Thu, 26 Jan 2012 08:59:58 -0500
-Subject: [PATCH 4/6] Ugly patch, nuff said
+Subject: [PATCH 04/15] Ugly patch, nuff said
 
 ---
  build/pom.xml |    5 -----
@@ -24,5 +24,5 @@ index 6142148..681b2a6 100644
              <artifactId>jboss-invocation</artifactId>
          </dependency>
 -- 
-1.7.7.6
+1.7.9
 

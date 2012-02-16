@@ -13,15 +13,17 @@
 
 Name:             jboss-as
 Version:          7.1.0
-Release:          0.1%{namedreltag}%{?dist}
+Release:          1%{?dist}
 Summary:          JBoss Application Server 7
 Group:            System Environment/Daemons
 License:          LGPLv2+ and ASL 2.0
 URL:              http://www.jboss.org/jbossas
 
 # git clone git://github.com/jbossas/jboss-as.git
-# cd jboss-as && git archive --format=tar --prefix=jboss-as-7.1.0.CR1b/ 7.1.0.CR1b | xz > jboss-as-7.1.0.CR1b.tar.xz
-Source0:          jboss-as-%{namedversion}.tar.xz
+# cd jboss-as && git checkout 7.1.0.Final && git checkout-index -f -a --prefix=jboss-as-7.1.0.Final/
+# find jboss-as-7.1.0.Final/ -name '*.jar' -type f -delete
+# tar -cJf jboss-as-7.1.0.Final-CLEAN.tar.xz jboss-as-7.1.0.Final
+Source0:          jboss-as-%{namedversion}-CLEAN.tar.xz
 Patch0:           0001-Disable-checkstyle.patch
 Patch1:           0002-Fix-initd-script.patch
 Patch2:           0003-Build-additional-modules.patch
@@ -29,8 +31,15 @@ Patch2:           0003-Build-additional-modules.patch
 Patch3:           0004-Ugly-patch-nuff-said.patch
 Patch4:           0005-Adding-javax.transaction-to-the-minimal-build.patch
 Patch5:           0006-adding-javax.validation-to-build.xml.patch
-Patch6:           0007-making-the-dependency-in-javax.xml.ws.api-optional-i.patch
-Patch7:           0008-adding-org.hibernate.validator.patch
+Patch6:           0007-Only-copy-schemas-and-create-client-all-jar-on-norma.patch
+Patch7:           0008-Make-the-dependency-on-dom4j-optional.patch
+Patch8:           0009-AS7-3724-DO-NOT-UPSTREAM-an-ugly-patch-to-remove-IIO.patch
+Patch9:           0010-adding-org.jboss.metadata-to-minimal-build.patch
+Patch10:          0011-adding-org.jboss.ejb3-module-to-minimal-build.patch
+Patch11:          0012-adding-org.jboss.as.logging.patch
+Patch12:          0013-Removing-logging-module-from-the-normal-profile-as-i.patch
+Patch13:          0014-making-the-dependency-in-javax.xml.ws.api-optional-i.patch
+Patch14:          0015-adding-org.hibernate.validator.patch
 
 BuildArch:        noarch
 
@@ -56,13 +65,15 @@ BuildRequires:    jboss-interceptors-1.1-api
 BuildRequires:    jboss-jad-1.2-api
 BuildRequires:    jboss-parent
 BuildRequires:    jboss-logging >= 3.1.0-0.1.CR1
-BuildRequires:    jboss-logging-tools >= 1.0.0-0.1.CR4
+BuildRequires:    jboss-logging-tools >= 1.0.0-1
 BuildRequires:    jboss-logmanager-log4j >= 1.0.0
 BuildRequires:    jboss-marshalling >= 1.3.4
-BuildRequires:    jboss-metadata >= 7.0.0-0.1.Beta32
+BuildRequires:    jboss-metadata >= 7.0.0-1
 BuildRequires:    jboss-modules >= 1.1.0-0.1.CR4
 BuildRequires:    jboss-msc >= 1.0.1
-BuildRequires:    jboss-remoting >= 3.2.0-0.2.CR6
+BuildRequires:    jboss-remoting >= 3.2.2
+BuildRequires:    jboss-remoting-jmx
+BuildRequires:    jboss-remote-naming >= 1.0.1
 BuildRequires:    jboss-sasl >= 1.0.0-0.1.Beta9
 BuildRequires:    jboss-stdio >= 1.0.1
 BuildRequires:    jboss-specs-parent
@@ -76,7 +87,7 @@ BuildRequires:    maven-jar-plugin
 BuildRequires:    maven-checkstyle-plugin
 BuildRequires:    maven-resources-plugin
 BuildRequires:    maven-surefire-plugin
-BuildRequires:    staxmapper >= 1.0.0
+BuildRequires:    staxmapper >= 1.1.0
 BuildRequires:    xnio >= 3.0.0-0.2.CR5
 
 Requires:         bean-validation-api
@@ -94,14 +105,16 @@ Requires:         jboss-interceptor >= 2.0.0-1
 Requires:         jboss-interceptors-1.1-api
 Requires:         jboss-invocation
 Requires:         jboss-logging >= 3.1.0-0.1.CR1
-Requires:         jboss-logging-tools >= 1.0.0-0.1.CR4
+Requires:         jboss-logging-tools >= 1.0.0-1
 Requires:         jboss-jad-1.2-api
 Requires:         jboss-logmanager-log4j >= 1.0.0
 Requires:         jboss-marshalling >= 1.3.4
-Requires:         jboss-metadata >= 7.0.0-0.1.Beta32
+Requires:         jboss-metadata >= 7.0.0-1
 Requires:         jboss-modules >= 1.1.0-0.1.CR4
 Requires:         jboss-msc >= 1.0.1
-Requires:         jboss-remoting >= 3.2.0-0.2.CR6
+Requires:         jboss-remoting >= 3.2.2
+Requires:         jboss-remoting-jmx
+Requires:         jboss-remote-naming >= 1.0.1
 Requires:         jboss-sasl >= 1.0.0-0.1.Beta9
 Requires:         jboss-stdio >= 1.0.1
 Requires:         jboss-threads >= 2.0.0
@@ -110,7 +123,7 @@ Requires:         jboss-vfs >= 3.1.0-0.1.CR1
 Requires:         jgroups
 Requires:         jline
 Requires:         jpackage-utils
-Requires:         staxmapper >= 1.0.0
+Requires:         staxmapper >= 1.1.0
 Requires:         xnio >= 3.0.0-0.2.CR5
 
 %description
@@ -138,6 +151,7 @@ This package contains the API documentation for %{name}.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
 # We don't have packaged all test dependencies (jboss-test for example)
@@ -204,11 +218,13 @@ pushd build/target/jboss-as-%{namedversion}
 
   # domain
   mv domain/configuration $RPM_BUILD_ROOT%{confdir}/domain
-  mv domain/content $RPM_BUILD_ROOT%{cachedir}/domain
 
   # Remove all jars from modules directory - we need to symlink them
   # TODO temporary with verbose, use -delete afterwards
   find . -type f -name "*.jar" -exec rm -rvf {} \;
+
+  # TMP - investigate
+  rm -rf bin/client
 
   mv copyright.txt README.txt LICENSE.txt welcome-content docs bin appclient modules $RPM_BUILD_ROOT%{homedir}
 popd
@@ -288,7 +304,7 @@ popd
 %{homedir}/appclient
 %{bindir}/*.conf
 %attr(0755,root,root) %{bindir}/*.sh
-%attr(0755,root,root) %{bindir}/util/*.sh
+#%attr(0755,root,root) %{bindir}/util/*.sh
 %{homedir}/auth
 %{homedir}/domain
 %{homedir}/standalone
@@ -323,7 +339,7 @@ popd
 %{_javadocdir}/%{name}
 
 %changelog
-* Thu Feb 16 2012 Carlo de Wolf <cdewolf@redhat.com> 7.1.0-0.1.Final
+* Thu Feb 16 2012 Carlo de Wolf <cdewolf@redhat.com> 7.1.0-1
 - Package 7.1.0.Final
 
 * Mon Jan 09 2012 Marek Goldmann <mgoldman@redhat.com> 7.1.0-0.1.CR1b

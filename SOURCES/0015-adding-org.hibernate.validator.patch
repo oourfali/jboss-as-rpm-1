@@ -1,0 +1,37 @@
+From 4e083fc4e0934e86e43679840697b8772e9a7fcb Mon Sep 17 00:00:00 2001
+From: Oved Ourfali <ovedo@redhat.com>
+Date: Wed, 15 Feb 2012 15:16:51 +0200
+Subject: [PATCH 15/15] adding org.hibernate.validator
+
+---
+ build/build.xml |    7 ++++---
+ 1 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/build/build.xml b/build/build.xml
+index 695ba6c..400d5eb 100644
+--- a/build/build.xml
++++ b/build/build.xml
+@@ -145,6 +145,10 @@
+             <maven-resource group="log4j" artifact="log4j"/>
+         </module-def>
+ 
++        <module-def name="org.hibernate.validator">
++            <maven-resource group="org.hibernate" artifact="hibernate-validator"/>
++        </module-def>
++
+         <module-def name="org.jboss.as.controller">
+             <maven-resource group="org.jboss.as" artifact="jboss-as-controller"/>
+         </module-def>
+@@ -645,9 +649,6 @@
+         <module-def name="org.hibernate.envers">
+             <maven-resource group="org.hibernate" artifact="hibernate-envers"/>
+         </module-def>
+-        <module-def name="org.hibernate.validator">
+-            <maven-resource group="org.hibernate" artifact="hibernate-validator"/>
+-        </module-def>
+         <module-def name="org.hibernate.infinispan">
+             <maven-resource group="org.hibernate" artifact="hibernate-infinispan"/>
+         </module-def>
+-- 
+1.7.9
+

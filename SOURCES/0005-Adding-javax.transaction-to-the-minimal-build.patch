@@ -1,7 +1,7 @@
 From eaf4c7d6a2f5cad041fe02e2484b16d78cb40dd4 Mon Sep 17 00:00:00 2001
 From: Oved Ourfali <ovedo@redhat.com>
 Date: Tue, 7 Feb 2012 15:23:21 +0200
-Subject: [PATCH 5/6] Adding javax.transaction to the minimal build
+Subject: [PATCH 05/15] Adding javax.transaction to the minimal build
 
 ---
  build/build.xml |    8 ++++----
@@ -34,5 +34,5 @@ index 6873789..ad0613e 100644
              <maven-resource group="javax.validation" artifact="validation-api"/>
          </module-def>
 -- 
-1.7.7.6
+1.7.9
 

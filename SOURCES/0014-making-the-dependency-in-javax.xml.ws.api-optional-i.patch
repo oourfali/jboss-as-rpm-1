@@ -1,0 +1,26 @@
+From a6d85717eb679177d5603e503b68401c34d73f39 Mon Sep 17 00:00:00 2001
+From: Oved Ourfali <ovedo@redhat.com>
+Date: Wed, 15 Feb 2012 15:16:12 +0200
+Subject: [PATCH 14/15] making the dependency in javax.xml.ws.api optional in
+ the ee module.
+
+---
+ .../modules/org/jboss/as/ee/main/module.xml        |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/build/src/main/resources/modules/org/jboss/as/ee/main/module.xml b/build/src/main/resources/modules/org/jboss/as/ee/main/module.xml
+index 7f5e4a2..483dcfd 100644
+--- a/build/src/main/resources/modules/org/jboss/as/ee/main/module.xml
++++ b/build/src/main/resources/modules/org/jboss/as/ee/main/module.xml
+@@ -36,7 +36,7 @@
+         <module name="javax.interceptor.api"/>
+         <module name="javax.transaction.api"/>
+         <module name="javax.validation.api"/>
+-        <module name="javax.xml.ws.api"/>
++        <module name="javax.xml.ws.api" optional="true"/>
+         <module name="org.hibernate.validator"/>
+         <module name="org.jboss.staxmapper"/>
+         <module name="org.jboss.as.controller"/>
+-- 
+1.7.9
+

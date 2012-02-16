@@ -1,0 +1,25 @@
+From 235f73ec86b7280c4b30ba8f15191684a188b347 Mon Sep 17 00:00:00 2001
+From: Carlo de Wolf <cdewolf@redhat.com>
+Date: Tue, 14 Feb 2012 14:26:52 +0100
+Subject: [PATCH 08/15] Make the dependency on dom4j optional
+
+---
+ .../modules/org/apache/log4j/main/module.xml       |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/build/src/main/resources/modules/org/apache/log4j/main/module.xml b/build/src/main/resources/modules/org/apache/log4j/main/module.xml
+index cca0a35..e1727b1 100644
+--- a/build/src/main/resources/modules/org/apache/log4j/main/module.xml
++++ b/build/src/main/resources/modules/org/apache/log4j/main/module.xml
+@@ -32,7 +32,7 @@
+     </resources>
+ 
+     <dependencies>
+-        <module name="org.dom4j"/>
++        <module name="org.dom4j" optional="true"/>
+         <module name="javax.api"/>
+     </dependencies>
+ </module>
+-- 
+1.7.9
+

@@ -1,0 +1,71 @@
+From e5438f991c623867ecc10059a65a088852c363b7 Mon Sep 17 00:00:00 2001
+From: Oved Ourfali <ovedo@redhat.com>
+Date: Thu, 16 Feb 2012 10:32:38 +0200
+Subject: [PATCH 11/15] adding org.jboss.ejb3 module to minimal build
+
+---
+ build/build.xml |   12 ++++++------
+ build/pom.xml   |   10 +++++-----
+ 2 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/build/build.xml b/build/build.xml
+index 3faf249..5d7a1d2 100644
+--- a/build/build.xml
++++ b/build/build.xml
+@@ -227,6 +227,12 @@
+             <maven-resource group="org.jboss" artifact="jboss-dmr"/>
+         </module-def>
+ 
++        <module-def name="org.jboss.ejb3">
++
++            <!-- TODO: this is not the final API -->
++            <maven-resource group="org.jboss.ejb3" artifact="jboss-ejb3-ext-api"/>
++        </module-def>
++
+         <module-def name="org.jboss.invocation">
+             <maven-resource group="org.jboss.invocation" artifact="jboss-invocation"/>
+         </module-def>
+@@ -899,12 +905,6 @@
+             <maven-resource group="org.jboss" artifact="jboss-ejb-client"/>
+         </module-def>
+ 
+-        <module-def name="org.jboss.ejb3">
+-
+-            <!-- TODO: this is not the final API -->
+-            <maven-resource group="org.jboss.ejb3" artifact="jboss-ejb3-ext-api"/>
+-        </module-def>
+-
+         <module-def name="org.jboss.integration.ext-content">
+             <!-- Bundling external content into deployments -->
+         </module-def>
+diff --git a/build/pom.xml b/build/pom.xml
+index 5c961ac..6d054ab 100644
+--- a/build/pom.xml
++++ b/build/pom.xml
+@@ -130,6 +130,11 @@
+         </dependency>
+ 
+         <dependency>
++            <groupId>org.jboss.ejb3</groupId>
++            <artifactId>jboss-ejb3-ext-api</artifactId>
++        </dependency>
++
++        <dependency>
+             <groupId>org.jboss.invocation</groupId>
+             <artifactId>jboss-invocation</artifactId>
+         </dependency>
+@@ -1007,11 +1012,6 @@
+                 </dependency>
+ 
+                 <dependency>
+-                    <groupId>org.jboss.ejb3</groupId>
+-                    <artifactId>jboss-ejb3-ext-api</artifactId>
+-                </dependency>
+-
+-                <dependency>
+                     <groupId>org.jboss.as</groupId>
+                     <artifactId>jboss-as-jpa</artifactId>
+                 </dependency>
+-- 
+1.7.9
+
