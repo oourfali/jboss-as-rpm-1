@@ -1,17 +1,17 @@
-From 20ae21abaf03b080d2f360e1598f95d7fb5f7fb8 Mon Sep 17 00:00:00 2001
+From 9ce3feda00eb9fa4007298d207b7e12fc2931ef1 Mon Sep 17 00:00:00 2001
 From: Oved Ourfali <ovedo@redhat.com>
 Date: Sun, 12 Feb 2012 12:09:59 +0200
-Subject: [PATCH] adding javax.validation to build.xml
+Subject: [PATCH 6/6] adding javax.validation to build.xml
 
 ---
  build/build.xml |    8 ++++----
  1 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/build/build.xml b/build/build.xml
-index 192119e..6714818 100644
+index ad0613e..b61087e 100644
 --- a/build/build.xml
 +++ b/build/build.xml
-@@ -113,6 +113,10 @@
+@@ -136,6 +136,10 @@
              <maven-resource group="org.jboss.spec.javax.transaction" artifact="jboss-transaction-api_1.1_spec"/>
          </module-def>
  
@@ -22,7 +22,7 @@ index 192119e..6714818 100644
          <module-def name="javax.xml.stream.api"/>
  
          <module-def name="org.apache.log4j">
-@@ -398,10 +402,6 @@
+@@ -437,10 +441,6 @@
              <maven-resource group="org.jboss.spec.javax.servlet.jstl" artifact="jboss-jstl-api_1.2_spec"/>
          </module-def>
  
@@ -34,5 +34,5 @@ index 192119e..6714818 100644
              <maven-resource group="org.jboss.spec.javax.ws.rs" artifact="jboss-jaxrs-api_1.1_spec"/>
          </module-def>
 -- 
-1.7.8.1
+1.7.7.6
 

@@ -1,6 +1,16 @@
-diff -Naur jboss-as-7.1.0.CR1b/build/src/main/resources/bin/init.d/jboss-as.conf jboss-as-7.1.0.CR1b-work/build/src/main/resources/bin/init.d/jboss-as.conf
---- jboss-as-7.1.0.CR1b/build/src/main/resources/bin/init.d/jboss-as.conf	2011-12-23 16:56:17.000000000 -0500
-+++ jboss-as-7.1.0.CR1b-work/build/src/main/resources/bin/init.d/jboss-as.conf	2012-01-09 08:41:13.280203232 -0500
+From d9181497b30c04ab6ab061270adbd225139f385e Mon Sep 17 00:00:00 2001
+From: Marek Goldmann <goldmann@fedoraproject.org>
+Date: Thu, 26 Jan 2012 08:58:59 -0500
+Subject: [PATCH 2/6] Fix initd script
+
+---
+ build/src/main/resources/bin/init.d/jboss-as.conf |    6 +++++-
+ 1 files changed, 5 insertions(+), 1 deletions(-)
+
+diff --git a/build/src/main/resources/bin/init.d/jboss-as.conf b/build/src/main/resources/bin/init.d/jboss-as.conf
+index 0bfc942..72a356b 100644
+--- a/build/src/main/resources/bin/init.d/jboss-as.conf
++++ b/build/src/main/resources/bin/init.d/jboss-as.conf
 @@ -3,7 +3,7 @@
  
  # The username who should own the process.
@@ -18,3 +28,6 @@ diff -Naur jboss-as-7.1.0.CR1b/build/src/main/resources/bin/init.d/jboss-as.conf
 +# The configuration you want to run
 +#
 +JBOSS_CONFIG=standalone-minimalistic.xml
+-- 
+1.7.7.6
+

@@ -1,7 +1,17 @@
-diff -Naur jboss-as-7.1.0.CR1b/build/pom.xml jboss-as-7.1.0.CR1b-work/build/pom.xml
---- jboss-as-7.1.0.CR1b/build/pom.xml	2011-12-23 16:56:17.000000000 -0500
-+++ jboss-as-7.1.0.CR1b-work/build/pom.xml	2012-01-09 09:22:42.897094527 -0500
-@@ -115,11 +115,6 @@
+From 097a39a485b8105091c7e3fbba6a50a571a9d4f2 Mon Sep 17 00:00:00 2001
+From: Marek Goldmann <goldmann@fedoraproject.org>
+Date: Thu, 26 Jan 2012 08:59:58 -0500
+Subject: [PATCH 4/6] Ugly patch, nuff said
+
+---
+ build/pom.xml |    5 -----
+ 1 files changed, 0 insertions(+), 5 deletions(-)
+
+diff --git a/build/pom.xml b/build/pom.xml
+index 6142148..681b2a6 100644
+--- a/build/pom.xml
++++ b/build/pom.xml
+@@ -130,11 +130,6 @@
          </dependency>
  
          <dependency>
@@ -13,3 +23,6 @@ diff -Naur jboss-as-7.1.0.CR1b/build/pom.xml jboss-as-7.1.0.CR1b-work/build/pom.
              <groupId>org.jboss.invocation</groupId>
              <artifactId>jboss-invocation</artifactId>
          </dependency>
+-- 
+1.7.7.6
+

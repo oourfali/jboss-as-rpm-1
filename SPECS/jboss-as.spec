@@ -1,4 +1,4 @@
-%global namedreltag .CR1b
+%global namedreltag .Final
 %global namedversion %{version}%{?namedreltag}
 
 %global cachedir %{_var}/cache/%{name}
@@ -323,6 +323,9 @@ popd
 %{_javadocdir}/%{name}
 
 %changelog
+* Thu Feb 16 2012 Carlo de Wolf <cdewolf@redhat.com> 7.1.0-0.1.Final
+- Package 7.1.0.Final
+
 * Mon Jan 09 2012 Marek Goldmann <mgoldman@redhat.com> 7.1.0-0.1.CR1b
 - Initial packaging
 

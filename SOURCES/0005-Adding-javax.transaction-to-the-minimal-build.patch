@@ -1,17 +1,17 @@
-From 4e6ccbf82837b0c08672ea980aac143dda080629 Mon Sep 17 00:00:00 2001
+From eaf4c7d6a2f5cad041fe02e2484b16d78cb40dd4 Mon Sep 17 00:00:00 2001
 From: Oved Ourfali <ovedo@redhat.com>
 Date: Tue, 7 Feb 2012 15:23:21 +0200
-Subject: [PATCH] Adding javax.transaction to the minimal build
+Subject: [PATCH 5/6] Adding javax.transaction to the minimal build
 
 ---
  build/build.xml |    8 ++++----
  1 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/build/build.xml b/build/build.xml
-index ef61780..192119e 100644
+index 6873789..ad0613e 100644
 --- a/build/build.xml
 +++ b/build/build.xml
-@@ -109,6 +109,10 @@
+@@ -132,6 +132,10 @@
              <maven-resource group="org.jboss.spec.javax.interceptor" artifact="jboss-interceptors-api_1.1_spec"/>
          </module-def>
  
@@ -22,7 +22,7 @@ index ef61780..192119e 100644
          <module-def name="javax.xml.stream.api"/>
  
          <module-def name="org.apache.log4j">
-@@ -394,10 +398,6 @@
+@@ -433,10 +437,6 @@
              <maven-resource group="org.jboss.spec.javax.servlet.jstl" artifact="jboss-jstl-api_1.2_spec"/>
          </module-def>
  
@@ -34,5 +34,5 @@ index ef61780..192119e 100644
              <maven-resource group="javax.validation" artifact="validation-api"/>
          </module-def>
 -- 
-1.7.8.1
+1.7.7.6
 

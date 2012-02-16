@@ -1,7 +1,17 @@
-diff -Naur jboss-as-7.1.0.CR1b/pom.xml jboss-as-7.1.0.CR1b-work/pom.xml
---- jboss-as-7.1.0.CR1b/pom.xml	2011-12-23 16:56:17.000000000 -0500
-+++ jboss-as-7.1.0.CR1b-work/pom.xml	2012-01-09 08:37:57.412224791 -0500
-@@ -289,10 +289,6 @@
+From 153bc9a20315293f4d954a20e46ce14387f6ebe0 Mon Sep 17 00:00:00 2001
+From: Marek Goldmann <goldmann@fedoraproject.org>
+Date: Thu, 26 Jan 2012 08:58:21 -0500
+Subject: [PATCH 1/6] Disable checkstyle
+
+---
+ pom.xml |   33 ---------------------------------
+ 1 files changed, 0 insertions(+), 33 deletions(-)
+
+diff --git a/pom.xml b/pom.xml
+index f2358fa..5b7b314 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -286,10 +286,6 @@
      <build>
          <plugins>
              <plugin>
@@ -12,7 +22,7 @@ diff -Naur jboss-as-7.1.0.CR1b/pom.xml jboss-as-7.1.0.CR1b-work/pom.xml
                  <groupId>org.codehaus.mojo</groupId>
                  <artifactId>buildnumber-maven-plugin</artifactId>
                  <executions>
-@@ -348,35 +344,6 @@
+@@ -345,35 +341,6 @@
                      </configuration>
                  </plugin>
  
@@ -48,3 +58,6 @@ diff -Naur jboss-as-7.1.0.CR1b/pom.xml jboss-as-7.1.0.CR1b-work/pom.xml
                  <!-- Ban bad dependencies -->
                  <plugin>
                      <groupId>org.apache.maven.plugins</groupId>
+-- 
+1.7.7.6
+
