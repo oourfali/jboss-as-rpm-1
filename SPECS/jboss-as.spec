@@ -152,6 +152,12 @@ This package contains the API documentation for %{name}.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
 
 %build
 # We don't have packaged all test dependencies (jboss-test for example)
