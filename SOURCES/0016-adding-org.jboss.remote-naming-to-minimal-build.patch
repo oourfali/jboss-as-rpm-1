@@ -1,0 +1,38 @@
+From 636737919e5e04cec2121167b8700ace83b5148c Mon Sep 17 00:00:00 2001
+From: Oved Ourfali <ovedo@redhat.com>
+Date: Sun, 19 Feb 2012 16:10:01 +0200
+Subject: [PATCH] adding org.jboss.remote-naming to minimal build
+
+---
+ build/build.xml |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/build/build.xml b/build/build.xml
+index 400d5eb..e515df5 100644
+--- a/build/build.xml
++++ b/build/build.xml
+@@ -292,6 +292,10 @@
+             <maven-resource group="org.jboss.remoting3" artifact="jboss-remoting"/>
+         </module-def>
+ 
++        <module-def name="org.jboss.remote-naming">
++            <maven-resource group="org.jboss" artifact="jboss-remote-naming"/>
++        </module-def>
++
+         <module-def name="org.jboss.remoting3.remoting-jmx">
+             <maven-resource group="org.jboss.remoting3" artifact="remoting-jmx"/>
+         </module-def>
+@@ -982,10 +986,6 @@
+             <maven-resource group="org.jboss.osgi.vfs" artifact="jbosgi-vfs30"/>
+         </module-def>
+ 
+-        <module-def name="org.jboss.remote-naming">
+-            <maven-resource group="org.jboss" artifact="jboss-remote-naming"/>
+-        </module-def>
+-
+         <module-def name="org.jboss.resteasy.resteasy-atom-provider">
+             <maven-resource group="org.jboss.resteasy" artifact="resteasy-atom-provider"  jandex="true"/>
+         </module-def>
+-- 
+1.7.9
+

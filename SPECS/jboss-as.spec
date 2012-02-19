@@ -40,6 +40,7 @@ Patch11:          0012-adding-org.jboss.as.logging.patch
 Patch12:          0013-Removing-logging-module-from-the-normal-profile-as-i.patch
 Patch13:          0014-making-the-dependency-in-javax.xml.ws.api-optional-i.patch
 Patch14:          0015-adding-org.hibernate.validator.patch
+Patch15:          0016-adding-org.jboss.remote-naming-to-minimal-build.patch
 
 BuildArch:        noarch
 
@@ -158,6 +159,7 @@ This package contains the API documentation for %{name}.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 
 %build
 # We don't have packaged all test dependencies (jboss-test for example)
@@ -295,6 +297,7 @@ pushd $RPM_BUILD_ROOT%{homedir}
     ln -s $(build-classpath geronimo-validation) javax/validation/api/main/geronimo-validation.jar
     ln -s $(build-classpath hibernate-validator) org/hibernate/validator/main/hibernate-validator.jar
     ln -s $(build-classpath jboss-remoting-jmx.jar) org/jboss/remoting3/remoting-jmx/main/jboss-remoting-jmx.jar
+    ln -s $(build-classpath jboss-remote-naming.jar) org/jboss/remote-naming/main/jboss-remote-naming.jar
     ln -s $(build-classpath log4j) org/apache/log4j/main/log4j.jar
 
     # JBoss AS modules (without build-config)
