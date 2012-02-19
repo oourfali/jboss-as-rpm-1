@@ -272,6 +272,7 @@ pushd $RPM_BUILD_ROOT%{homedir}
     ln -s $(build-classpath jboss/jboss-remoting) org/jboss/remoting3/main/jboss-remoting.jar
     ln -s $(build-classpath jboss/jboss-dmr) org/jboss/dmr/main/jboss-dmr.jar
     ln -s $(build-classpath jboss/jboss-ejb3-ext-api) org/jboss/ejb3/main/jboss-ejb3-ext-api.jar
+    ln -s $(build-classpath jboss/jboss-httpserver) org/jboss/com/sun/httpserver/main/jboss-httpserver.jar
     ln -s $(build-classpath jboss/jboss-marshalling-river) org/jboss/marshalling/river/main/jboss-marshalling-river.jar
     ln -s $(build-classpath jboss/jboss-marshalling) org/jboss/marshalling/main/jboss-marshalling.jar
     ln -s $(build-classpath jboss/jboss-metadata-appclient) org/jboss/metadata/main/jboss-metadata-appclient.jar
@@ -296,8 +297,8 @@ pushd $RPM_BUILD_ROOT%{homedir}
     ln -s $(build-classpath jboss-remoting-jmx.jar) org/jboss/remoting3/remoting-jmx/main/jboss-remoting-jmx.jar
     ln -s $(build-classpath log4j) org/apache/log4j/main/log4j.jar
 
-    # JBoss AS modules (without build-config and threads)
-    for m in %{modules}; do
+    # JBoss AS modules (without build-config)
+    for m in %{modules} threads domain-http-error-context; do
       ln -s %{_javadir}/jboss-as/jboss-as-${m}.jar org/jboss/as/${m}/main/jboss-as-${m}-%{namedversion}.jar
     done
 
