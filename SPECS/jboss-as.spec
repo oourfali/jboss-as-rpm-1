@@ -40,6 +40,7 @@ Patch11:          0012-adding-org.jboss.as.logging.patch
 Patch12:          0013-Removing-logging-module-from-the-normal-profile-as-i.patch
 Patch13:          0014-making-the-dependency-in-javax.xml.ws.api-optional-i.patch
 Patch14:          0015-adding-org.hibernate.validator.patch
+Patch15:          0016-adding-org.jboss.remote-naming-to-minimal-build.patch
 
 BuildArch:        noarch
 
@@ -69,7 +70,7 @@ BuildRequires:    jboss-logging-tools >= 1.0.0-1
 BuildRequires:    jboss-logmanager-log4j >= 1.0.0
 BuildRequires:    jboss-marshalling >= 1.3.4
 BuildRequires:    jboss-metadata >= 7.0.0-1
-BuildRequires:    jboss-modules >= 1.1.0-0.1.CR4
+BuildRequires:    jboss-modules >= 1.1.1-1
 BuildRequires:    jboss-msc >= 1.0.1
 BuildRequires:    jboss-remoting >= 3.2.2
 BuildRequires:    jboss-remoting-jmx
@@ -158,6 +159,7 @@ This package contains the API documentation for %{name}.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 
 %build
 # We don't have packaged all test dependencies (jboss-test for example)
@@ -272,6 +274,7 @@ pushd $RPM_BUILD_ROOT%{homedir}
     ln -s $(build-classpath jboss/jboss-remoting) org/jboss/remoting3/main/jboss-remoting.jar
     ln -s $(build-classpath jboss/jboss-dmr) org/jboss/dmr/main/jboss-dmr.jar
     ln -s $(build-classpath jboss/jboss-ejb3-ext-api) org/jboss/ejb3/main/jboss-ejb3-ext-api.jar
+    ln -s $(build-classpath jboss/jboss-httpserver) org/jboss/com/sun/httpserver/main/jboss-httpserver.jar
     ln -s $(build-classpath jboss/jboss-marshalling-river) org/jboss/marshalling/river/main/jboss-marshalling-river.jar
     ln -s $(build-classpath jboss/jboss-marshalling) org/jboss/marshalling/main/jboss-marshalling.jar
     ln -s $(build-classpath jboss/jboss-metadata-appclient) org/jboss/metadata/main/jboss-metadata-appclient.jar
@@ -293,10 +296,12 @@ pushd $RPM_BUILD_ROOT%{homedir}
     ln -s $(build-classpath jboss/staxmapper) org/jboss/staxmapper/main/staxmapper.jar
     ln -s $(build-classpath geronimo-validation) javax/validation/api/main/geronimo-validation.jar
     ln -s $(build-classpath hibernate-validator) org/hibernate/validator/main/hibernate-validator.jar
+    ln -s $(build-classpath jboss-remoting-jmx) org/jboss/remoting3/remoting-jmx/main/jboss-remoting-jmx.jar
+    ln -s $(build-classpath jboss-remote-naming) org/jboss/remote-naming/main/jboss-remote-naming.jar
     ln -s $(build-classpath log4j) org/apache/log4j/main/log4j.jar
 
-    # JBoss AS modules (without build-config and threads)
-    for m in %{modules}; do
+    # JBoss AS modules (without build-config)
+    for m in %{modules} threads domain-http-error-context; do
       ln -s %{_javadir}/jboss-as/jboss-as-${m}.jar org/jboss/as/${m}/main/jboss-as-${m}-%{namedversion}.jar
     done
 
