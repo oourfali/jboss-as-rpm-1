@@ -69,7 +69,7 @@ BuildRequires:    jboss-logging-tools >= 1.0.0-1
 BuildRequires:    jboss-logmanager-log4j >= 1.0.0
 BuildRequires:    jboss-marshalling >= 1.3.4
 BuildRequires:    jboss-metadata >= 7.0.0-1
-BuildRequires:    jboss-modules >= 1.1.0-0.1.CR4
+BuildRequires:    jboss-modules >= 1.1.0-0.3.CR8
 BuildRequires:    jboss-msc >= 1.0.1
 BuildRequires:    jboss-remoting >= 3.2.2
 BuildRequires:    jboss-remoting-jmx
@@ -293,6 +293,7 @@ pushd $RPM_BUILD_ROOT%{homedir}
     ln -s $(build-classpath jboss/staxmapper) org/jboss/staxmapper/main/staxmapper.jar
     ln -s $(build-classpath geronimo-validation) javax/validation/api/main/geronimo-validation.jar
     ln -s $(build-classpath hibernate-validator) org/hibernate/validator/main/hibernate-validator.jar
+    ln -s $(build-classpath jboss-remoting-jmx.jar) org/jboss/remoting3/remoting-jmx/main/jboss-remoting-jmx.jar
     ln -s $(build-classpath log4j) org/apache/log4j/main/log4j.jar
 
     # JBoss AS modules (without build-config and threads)
