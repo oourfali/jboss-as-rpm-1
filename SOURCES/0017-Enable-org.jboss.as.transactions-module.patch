@@ -1,0 +1,88 @@
+From 3eefabc83e3ef92e36232f8280d60c9ae0ddfdfd Mon Sep 17 00:00:00 2001
+From: Marek Goldmann <mgoldman@redhat.com>
+Date: Mon, 20 Feb 2012 12:10:32 +0100
+Subject: [PATCH 17/17] Enable org.jboss.as.transactions module
+
+---
+ build/build.xml |    8 ++++----
+ build/pom.xml   |   10 +++++-----
+ pom.xml         |    2 +-
+ 3 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/build/build.xml b/build/build.xml
+index e515df5..f868cf2 100644
+--- a/build/build.xml
++++ b/build/build.xml
+@@ -223,6 +223,10 @@
+             <maven-resource group="org.jboss.as" artifact="jboss-as-threads"/>
+         </module-def>
+ 
++        <module-def name="org.jboss.as.transactions">
++            <maven-resource group="org.jboss.as" artifact="jboss-as-transactions"/>
++        </module-def>
++
+         <module-def name="org.jboss.com.sun.httpserver">
+             <maven-resource group="org.jboss.com.sun.httpserver" artifact="httpserver"/>
+         </module-def>
+@@ -871,10 +875,6 @@
+             <maven-resource group="org.jboss.as" artifact="jboss-as-security"/>
+         </module-def>
+ 
+-        <module-def name="org.jboss.as.transactions">
+-            <maven-resource group="org.jboss.as" artifact="jboss-as-transactions"/>
+-        </module-def>
+-
+         <module-def name="org.jboss.as.web">
+             <maven-resource group="org.jboss.as" artifact="jboss-as-web"/>
+             <maven-resource group="org.jboss.web" artifact="jasper-jdt"/>
+diff --git a/build/pom.xml b/build/pom.xml
+index 19726e2..d8ad535 100644
+--- a/build/pom.xml
++++ b/build/pom.xml
+@@ -135,6 +135,11 @@
+         </dependency>
+ 
+         <dependency>
++            <groupId>org.jboss.as</groupId>
++            <artifactId>jboss-as-transactions</artifactId>
++        </dependency>
++
++        <dependency>
+             <groupId>org.jboss.ejb3</groupId>
+             <artifactId>jboss-ejb3-ext-api</artifactId>
+         </dependency>
+@@ -971,11 +976,6 @@
+ 
+                 <dependency>
+                     <groupId>org.jboss.as</groupId>
+-                    <artifactId>jboss-as-transactions</artifactId>
+-                </dependency>
+-
+-                <dependency>
+-                    <groupId>org.jboss.as</groupId>
+                     <artifactId>jboss-as-web</artifactId>
+                 </dependency>
+ 
+diff --git a/pom.xml b/pom.xml
+index c894765..115fdc6 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -285,6 +285,7 @@
+         <module>server</module>
+         <module>subsystem-test</module>
+         <module>threads</module>
++        <module>transactions</module>
+     </modules>
+ 
+     <build>
+@@ -5942,7 +5943,6 @@
+                 <module>sar</module>
+                 <module>security</module>
+                 <module>spec-api</module>
+-                <module>transactions</module>
+                 <module>web</module>
+                 <module>webservices</module>
+                 <module>weld</module>
+-- 
+1.7.9.1
+

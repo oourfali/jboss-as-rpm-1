@@ -1,0 +1,47 @@
+From 835d31fcad8ed79070c109adf6a8760ddbfcad75 Mon Sep 17 00:00:00 2001
+From: Marek Goldmann <mgoldman@redhat.com>
+Date: Mon, 20 Feb 2012 15:28:46 +0100
+Subject: [PATCH 18/18] Removing use of HornetqJournalEnvironmentBean in
+ ArjunaObjectStoreEnvironmentService, as currently we
+ don't have HornetQ packaged and jboss-jts compiled
+ with HornetQ support. REVERT this after we package
+ HornetQ.
+
+---
+ .../ArjunaObjectStoreEnvironmentService.java       |   13 +------------
+ 1 files changed, 1 insertions(+), 12 deletions(-)
+
+diff --git a/transactions/src/main/java/org/jboss/as/txn/service/ArjunaObjectStoreEnvironmentService.java b/transactions/src/main/java/org/jboss/as/txn/service/ArjunaObjectStoreEnvironmentService.java
+index 0eec14d..6bafbc2 100644
+--- a/transactions/src/main/java/org/jboss/as/txn/service/ArjunaObjectStoreEnvironmentService.java
++++ b/transactions/src/main/java/org/jboss/as/txn/service/ArjunaObjectStoreEnvironmentService.java
+@@ -3,7 +3,6 @@
+  */
+ package org.jboss.as.txn.service;
+ 
+-import com.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqJournalEnvironmentBean;
+ import org.jboss.msc.service.Service;
+ import org.jboss.msc.service.StartContext;
+ import org.jboss.msc.service.StartException;
+@@ -40,17 +39,7 @@ public class ArjunaObjectStoreEnvironmentService implements Service<Void> {
+          final ObjectStoreEnvironmentBean defaultActionStoreObjectStoreEnvironmentBean =
+            BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "default");
+ 
+-        if(useHornetqJournalStore) {
+-            HornetqJournalEnvironmentBean hornetqJournalEnvironmentBean = BeanPopulator.getDefaultInstance(
+-                    com.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqJournalEnvironmentBean.class
+-            );
+-            hornetqJournalEnvironmentBean.setStoreDir(objectStoreDir+"/HornetqObjectStore");
+-            defaultActionStoreObjectStoreEnvironmentBean.setObjectStoreType(
+-                    "com.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqObjectStoreAdaptor"
+-            );
+-        } else {
+-            defaultActionStoreObjectStoreEnvironmentBean.setObjectStoreDir(objectStoreDir);
+-        }
++        defaultActionStoreObjectStoreEnvironmentBean.setObjectStoreDir(objectStoreDir);
+ 
+         final ObjectStoreEnvironmentBean stateStoreObjectStoreEnvironmentBean =
+             BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "stateStore");
+-- 
+1.7.9.1
+

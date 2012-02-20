@@ -9,7 +9,7 @@
 
 %global tcuid 92
 
-%global modules controller-client controller deployment-repository domain-management ee embedded jmx logging naming network platform-mbean process-controller protocol remoting server
+%global modules controller-client controller deployment-repository domain-management ee embedded jmx logging naming network platform-mbean process-controller protocol remoting server transactions
 
 Name:             jboss-as
 Version:          7.1.0
@@ -41,6 +41,8 @@ Patch12:          0013-Removing-logging-module-from-the-normal-profile-as-i.patc
 Patch13:          0014-making-the-dependency-in-javax.xml.ws.api-optional-i.patch
 Patch14:          0015-adding-org.hibernate.validator.patch
 Patch15:          0016-adding-org.jboss.remote-naming-to-minimal-build.patch
+Patch16:          0017-Enable-org.jboss.as.transactions-module.patch
+Patch17:          0018-Removing-use-of-HornetqJournalEnvironmentBean-in-Arj.patch
 
 BuildArch:        noarch
 
@@ -57,6 +59,7 @@ BuildRequires:    jandex >= 1.0.3
 BuildRequires:    java-devel
 BuildRequires:    jgroups
 BuildRequires:    jboss-annotations-1.1-api
+BuildRequires:    jboss-connector-1.6-api
 BuildRequires:    jboss-dmr >= 1.1.1-1
 BuildRequires:    jboss-ejb-3.1-api
 BuildRequires:    jboss-httpserver >= 1.0.0-0.3.Beta3
@@ -64,6 +67,7 @@ BuildRequires:    jboss-invocation
 BuildRequires:    jboss-interceptor >= 2.0.0-1
 BuildRequires:    jboss-interceptors-1.1-api
 BuildRequires:    jboss-jad-1.2-api
+BuildRequires:    jboss-jts
 BuildRequires:    jboss-parent
 BuildRequires:    jboss-logging >= 3.1.0-0.1.CR1
 BuildRequires:    jboss-logging-tools >= 1.0.0-1
@@ -80,7 +84,9 @@ BuildRequires:    jboss-stdio >= 1.0.1
 BuildRequires:    jboss-specs-parent
 BuildRequires:    jboss-threads >= 2.0.0
 BuildRequires:    jboss-transaction-1.1-api
+BuildRequires:    jboss-transaction-spi
 BuildRequires:    jboss-vfs >= 3.1.0-0.1.CR1
+BuildRequires:    jbossws-api
 BuildRequires:    jline
 BuildRequires:    jpackage-utils
 BuildRequires:    maven
@@ -99,12 +105,14 @@ Requires:         hibernate-validator >= 4.2.0
 Requires:         jandex >= 1.0.3
 Requires:         java
 Requires:         jboss-annotations-1.1-api
+Requires:         jboss-connector-1.6-api
 Requires:         jboss-dmr >= 1.1.1-1
 Requires:         jboss-ejb-3.1-api
 Requires:         jboss-httpserver >= 1.0.0-0.3.Beta3
 Requires:         jboss-interceptor >= 2.0.0-1
 Requires:         jboss-interceptors-1.1-api
 Requires:         jboss-invocation
+Requires:         jboss-jts
 Requires:         jboss-logging >= 3.1.0-0.1.CR1
 Requires:         jboss-logging-tools >= 1.0.0-1
 Requires:         jboss-jad-1.2-api
@@ -120,7 +128,9 @@ Requires:         jboss-sasl >= 1.0.0-0.1.Beta9
 Requires:         jboss-stdio >= 1.0.1
 Requires:         jboss-threads >= 2.0.0
 Requires:         jboss-transaction-1.1-api
+Requires:         jboss-transaction-spi
 Requires:         jboss-vfs >= 3.1.0-0.1.CR1
+Requires:         jbossws-api
 Requires:         jgroups
 Requires:         jline
 Requires:         jpackage-utils
@@ -160,6 +170,8 @@ This package contains the API documentation for %{name}.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
+%patch17 -p1
 
 %build
 # We don't have packaged all test dependencies (jboss-test for example)
