@@ -1,0 +1,38 @@
+From 384d0efcba5fa99b5f35d3365b05a422c977b779 Mon Sep 17 00:00:00 2001
+From: Oved Ourfali <ovedo@redhat.com>
+Date: Tue, 21 Feb 2012 09:44:57 +0200
+Subject: [PATCH] adding org.jboss.jboss-transaction-spi to minimal build
+
+---
+ build/build.xml |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/build/build.xml b/build/build.xml
+index f868cf2..dabb01a 100644
+--- a/build/build.xml
++++ b/build/build.xml
+@@ -292,6 +292,10 @@
+             <maven-resource group="org.jboss.as" artifact="jboss-as-naming"/>
+         </module-def>
+ 
++        <module-def name="org.jboss.jboss-transaction-spi">
++            <maven-resource group="org.jboss" artifact="jboss-transaction-spi"/>
++        </module-def>
++
+         <module-def name="org.jboss.remoting3">
+             <maven-resource group="org.jboss.remoting3" artifact="jboss-remoting"/>
+         </module-def>
+@@ -914,10 +918,6 @@
+             <!-- Bundling external content into deployments -->
+         </module-def>
+ 
+-        <module-def name="org.jboss.jboss-transaction-spi">
+-            <maven-resource group="org.jboss" artifact="jboss-transaction-spi"/>
+-        </module-def>
+-
+         <module-def name="org.jboss.iiop-client">
+             <maven-resource group="org.jboss" artifact="jboss-iiop-client"/>
+         </module-def>
+-- 
+1.7.9
+

@@ -43,6 +43,7 @@ Patch14:          0015-adding-org.hibernate.validator.patch
 Patch15:          0016-adding-org.jboss.remote-naming-to-minimal-build.patch
 Patch16:          0017-Enable-org.jboss.as.transactions-module.patch
 Patch17:          0018-Removing-use-of-HornetqJournalEnvironmentBean-in-Arj.patch
+Patch18:          0019-adding-org.jboss.jboss-transaction-spi-to-minimal-bu.patch
 
 BuildArch:        noarch
 
@@ -172,6 +173,7 @@ This package contains the API documentation for %{name}.
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+%patch18 -p1
 
 %build
 # We don't have packaged all test dependencies (jboss-test for example)
@@ -310,6 +312,7 @@ pushd $RPM_BUILD_ROOT%{homedir}
     ln -s $(build-classpath hibernate-validator) org/hibernate/validator/main/hibernate-validator.jar
     ln -s $(build-classpath jboss-remoting-jmx) org/jboss/remoting3/remoting-jmx/main/jboss-remoting-jmx.jar
     ln -s $(build-classpath jboss-remote-naming) org/jboss/remote-naming/main/jboss-remote-naming.jar
+    ln -s $(build-classpath jboss-transaction-spi) org/jboss/jboss-transaction-spi/main/jboss-transaction-spi.jar
     ln -s $(build-classpath log4j) org/apache/log4j/main/log4j.jar
 
     # JBoss AS modules (without build-config)
