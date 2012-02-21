@@ -44,6 +44,7 @@ Patch15:          0016-adding-org.jboss.remote-naming-to-minimal-build.patch
 Patch16:          0017-Enable-org.jboss.as.transactions-module.patch
 Patch17:          0018-Removing-use-of-HornetqJournalEnvironmentBean-in-Arj.patch
 Patch18:          0019-adding-org.jboss.jboss-transaction-spi-to-minimal-bu.patch
+Patch19:          0020-adding-jts-modules-to-minimal-build.patch
 
 BuildArch:        noarch
 
@@ -174,6 +175,7 @@ This package contains the API documentation for %{name}.
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
+%patch19 -p1
 
 %build
 # We don't have packaged all test dependencies (jboss-test for example)
@@ -308,6 +310,8 @@ pushd $RPM_BUILD_ROOT%{homedir}
     ln -s $(build-classpath jboss/xnio-nio) org/jboss/xnio/nio/main/xnio-nio.jar
     ln -s $(build-classpath jboss/jboss-stdio) org/jboss/stdio/main/jboss-stdio.jar
     ln -s $(build-classpath jboss/staxmapper) org/jboss/staxmapper/main/staxmapper.jar
+    ln -s $(build-classpath jboss-jts/jbossjta) org/jboss/jts/main/jbossjta.jar
+    ln -s $(build-classpath jboss-jts/jbossjta-integration) org/jboss/jts/integration/main/jbossjta-integration.jar
     ln -s $(build-classpath geronimo-validation) javax/validation/api/main/geronimo-validation.jar
     ln -s $(build-classpath hibernate-validator) org/hibernate/validator/main/hibernate-validator.jar
     ln -s $(build-classpath jboss-remoting-jmx) org/jboss/remoting3/remoting-jmx/main/jboss-remoting-jmx.jar

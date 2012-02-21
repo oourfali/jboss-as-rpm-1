@@ -1,0 +1,46 @@
+From 194a92f806f75b52608fcaca2ca1ddda2448609c Mon Sep 17 00:00:00 2001
+From: Oved Ourfali <ovedo@redhat.com>
+Date: Tue, 21 Feb 2012 10:23:22 +0200
+Subject: [PATCH 2/2] adding jts modules to minimal build
+
+---
+ build/build.xml |   16 ++++++++--------
+ 1 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/build/build.xml b/build/build.xml
+index dabb01a..c8a94a5 100644
+--- a/build/build.xml
++++ b/build/build.xml
+@@ -254,6 +254,14 @@
+             <maven-resource group="org.jboss" artifact="jandex"/>
+         </module-def>
+ 
++        <module-def name="org.jboss.jts">
++            <maven-resource group="org.jboss.jbossts" artifact="jbossjta"/>
++        </module-def>
++
++        <module-def name="org.jboss.jts.integration">
++            <maven-resource group="org.jboss.jbossts" artifact="jbossjta-integration"/>
++        </module-def>
++
+         <module-def name="org.jboss.marshalling">
+             <maven-resource group="org.jboss.marshalling" artifact="jboss-marshalling"/>
+         </module-def>
+@@ -951,14 +959,6 @@
+             <maven-resource group="jboss.jaxbintros" artifact="jboss-jaxb-intros"/>
+         </module-def>
+ 
+-        <module-def name="org.jboss.jts">
+-            <maven-resource group="org.jboss.jbossts" artifact="jbossjta"/>
+-        </module-def>
+-
+-        <module-def name="org.jboss.jts.integration">
+-            <maven-resource group="org.jboss.jbossts" artifact="jbossjta-integration"/>
+-        </module-def>
+-
+         <module-def name="org.jboss.netty">
+             <maven-resource group="org.jboss.netty" artifact="netty"/>
+         </module-def>
+-- 
+1.7.9
+
