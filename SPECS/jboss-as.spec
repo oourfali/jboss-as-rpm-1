@@ -45,6 +45,7 @@ Patch16:          0017-Enable-org.jboss.as.transactions-module.patch
 Patch17:          0018-Removing-use-of-HornetqJournalEnvironmentBean-in-Arj.patch
 Patch18:          0019-adding-org.jboss.jboss-transaction-spi-to-minimal-bu.patch
 Patch19:          0020-adding-jts-modules-to-minimal-build.patch
+Patch20:          0021-adding-org.omg.api-to-minimal-build.patch
 
 BuildArch:        noarch
 
@@ -176,6 +177,7 @@ This package contains the API documentation for %{name}.
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
+%patch20 -p1
 
 %build
 # We don't have packaged all test dependencies (jboss-test for example)

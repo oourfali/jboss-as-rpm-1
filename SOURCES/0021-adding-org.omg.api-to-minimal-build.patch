@@ -1,0 +1,34 @@
+From ff6bfa735cc69d00d27787219c9b6bde6a53302b Mon Sep 17 00:00:00 2001
+From: Oved Ourfali <ovedo@redhat.com>
+Date: Tue, 21 Feb 2012 11:01:21 +0200
+Subject: [PATCH 3/3] adding org.omg.api to minimal build
+
+---
+ build/build.xml |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/build/build.xml b/build/build.xml
+index c8a94a5..7747acb 100644
+--- a/build/build.xml
++++ b/build/build.xml
+@@ -344,6 +344,8 @@
+             <maven-resource group="org.jboss.xnio" artifact="xnio-nio"/>
+         </module-def>
+ 
++        <module-def name="org.omg.api" />
++
+     </target>
+ 
+     <target name="modules" depends="modules-minimalistic">
+@@ -1134,8 +1136,6 @@
+             <maven-resource group="junit" artifact="junit"/>
+         </module-def>
+ 
+-        <module-def name="org.omg.api" />
+-
+         <module-def name="org.osgi.core">
+             <maven-resource group="org.osgi" artifact="org.osgi.core"/>
+         </module-def>
+-- 
+1.7.9
+
